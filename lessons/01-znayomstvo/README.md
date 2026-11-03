@@ -91,6 +91,9 @@ Get-Clipboard
 
 **Завдання 4.** Покажіть усі файли `.docx` у папці «Документи» разом із вкладеними папками. Потім напишіть ту саму команду через псевдонім `dir`. *(урок 4)*
 
+> [!NOTE]
+> Якщо у вас увімкнено OneDrive, «Документи» можуть бути в `$HOME\OneDrive\Documents`. Тоді вкажіть цей шлях.
+
 <details>
 <summary>Розв’язок</summary>
 
@@ -98,8 +101,6 @@ Get-Clipboard
 Get-ChildItem -Path $HOME\Documents -Filter *.docx -Recurse
 dir $HOME\Documents -Filter *.docx -Recurse
 ```
-
-> Якщо у вас увімкнено OneDrive, «Документи» можуть бути в `$HOME\OneDrive\Documents`. Тоді вкажіть цей шлях.
 
 </details>
 
