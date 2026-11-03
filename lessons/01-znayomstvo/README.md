@@ -122,4 +122,4 @@ Stop-Process -Name CalculatorApp -Confirm   # натисніть Y
 </details>
 
 ---
-[← Урок 4](04-parametry-ta-psevdonimy.md) · [Зміст курсу](../../README.md)
+[← Урок 4](04-parametry-ta-psevdonimy.md) · [Зміст курсу](../../README.md) · [Модуль 2. Файли та папки →](../02-faily-ta-papky/05-perekhodymo-papkamy.md)

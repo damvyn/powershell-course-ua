@@ -26,11 +26,12 @@
 - [Урок 3. Як знайти потрібну команду](lessons/01-znayomstvo/03-poshuk-komand.md)
 - [Урок 4. Параметри та псевдоніми](lessons/01-znayomstvo/04-parametry-ta-psevdonimy.md)
 
-### Модуль 2. Файли та папки *(готується)*
-- Урок 5. Переходимо папками
-- Урок 6. Створюємо, копіюємо, видаляємо
-- Урок 7. Текстові файли
-- Урок 8. Диски PowerShell
+### Модуль 2. Файли та папки
+- [Огляд модуля і підсумковий тест](lessons/02-faily-ta-papky/README.md)
+- [Урок 5. Переходимо папками](lessons/02-faily-ta-papky/05-perekhodymo-papkamy.md)
+- [Урок 6. Створюємо, копіюємо, видаляємо](lessons/02-faily-ta-papky/06-stvoryuyemo-kopiyuyemo-vydalyayemo.md)
+- [Урок 7. Текстові файли](lessons/02-faily-ta-papky/07-tekstovi-faily.md)
+- [Урок 8. Диски PowerShell](lessons/02-faily-ta-papky/08-dysky-powershell.md)
 
 ### Модуль 3. Об’єкти та конвеєр *(готується)*
 - Урок 9. Усе є об’єктом
