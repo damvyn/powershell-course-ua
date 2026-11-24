@@ -34,48 +34,41 @@
 - [Урок 8. Диски PowerShell](lessons/02-faily-ta-papky/08-dysky-powershell.md)
 
 ### Модуль 3. Об’єкти та конвеєр *(готується)*
-- [Огляд модуля і підсумковий тест](lessons/03-obyekty-ta-konveyer/README.md)
-- [Урок 9. Усе є об’єктом](lessons/03-obyekty-ta-konveyer/09-use-ye-obyektom.md)
-- [Урок 10. Конвеєр «|»](lessons/03-obyekty-ta-konveyer/10-konveyer.md)
-- [Урок 11. Фільтруємо дані](lessons/03-obyekty-ta-konveyer/11-filtruyemo-dani.md)
-- [Урок 12. Гарний вивід і підрахунки](lessons/03-obyekty-ta-konveyer/12-vyvid-i-pidrakhunky.md)
+- Урок 9. Усе є об’єктом
+- Урок 10. Конвеєр «|»
+- Урок 11. Фільтруємо дані
+- Урок 12. Гарний вивід і підрахунки
 
 ### Модуль 4. Змінні та типи даних *(готується)*
-- [Огляд модуля і підсумковий тест](lessons/04-zminni-ta-typy-danykh/README.md)
-- [Урок 13. Змінні](lessons/04-zminni-ta-typy-danykh/13-zminni.md)
-- [Урок 14. Числа, дати, так/ні](lessons/04-zminni-ta-typy-danykh/14-chysla-daty-tak-ni.md)
-- [Урок 15. Рядки](lessons/04-zminni-ta-typy-danykh/15-ryadky.md)
-- [Урок 16. Списки та таблиці](lessons/04-zminni-ta-typy-danykh/16-spysky-ta-tablytsi.md)
+- Урок 13. Змінні
+- Урок 14. Числа, дати, так/ні
+- Урок 15. Рядки
+- Урок 16. Списки та таблиці
 
 ### Модуль 5. Робота з даними *(готується)*
-- [Огляд модуля і підсумковий тест](lessons/05-robota-z-danymy/README.md)
-- [Урок 17. CSV та Excel](lessons/05-robota-z-danymy/17-csv-ta-excel.md)
-- [Урок 18. JSON і дані з інтернету](lessons/05-robota-z-danymy/18-json-i-dani-z-internetu.md)
-- [Урок 19. XML коротко](lessons/05-robota-z-danymy/19-xml-korotko.md)
+- Урок 17. CSV та Excel
+- Урок 18. JSON і дані з інтернету
+- Урок 19. XML коротко
 
 ### Модуль 6. Скрипти *(готується)*
-- [Огляд модуля і підсумковий тест](lessons/06-skrypty/README.md)
-- [Урок 20. Перший скрипт](lessons/06-skrypty/20-pershyi-skrypt.md)
-- [Урок 21. Умови](lessons/06-skrypty/21-umovy.md)
-- [Урок 22. Цикли](lessons/06-skrypty/22-tsykly.md)
-- [Урок 23. Власні функції](lessons/06-skrypty/23-vlasni-funktsii.md)
-- [Урок 24. Коли щось пішло не так](lessons/06-skrypty/24-koly-shchos-pishlo-ne-tak.md)
-- [Урок 25. Модулі та профіль](lessons/06-skrypty/25-moduli-ta-profil.md)
+- Урок 20. Перший скрипт
+- Урок 21. Умови
+- Урок 22. Цикли
+- Урок 23. Власні функції
+- Урок 24. Коли щось пішло не так
+- Урок 25. Модулі та профіль
 
 ### Модуль 7. Комп’ютер під контролем *(готується)*
-- [Огляд модуля і підсумковий тест](lessons/07-kompyuter-pid-kontrolem/README.md)
-- [Урок 26. Програми та служби](lessons/07-kompyuter-pid-kontrolem/26-prohramy-ta-sluzhby.md)
-- [Урок 27. Інформація про комп’ютер (CIM)](lessons/07-kompyuter-pid-kontrolem/27-informatsiya-pro-kompyuter.md)
-- [Урок 28. Мережа та інтернет](lessons/07-kompyuter-pid-kontrolem/28-merezha-ta-internet.md)
-- [Урок 29. Запуск за розкладом](lessons/07-kompyuter-pid-kontrolem/29-zapusk-za-rozkladom.md)
+- Урок 26. Програми та служби
+- Урок 27. Інформація про комп’ютер (CIM)
+- Урок 28. Мережа та інтернет
+- Урок 29. Запуск за розкладом
 
 ### Модуль 8. Віддалене керування (огляд) *(готується)*
-- [Огляд модуля і підсумковий тест](lessons/08-viddalene-keruvannya/README.md)
-- [Урок 30. Як PowerShell керує іншими комп’ютерами](lessons/08-viddalene-keruvannya/30-yak-powershell-keruye-inshymy-kompyuteramy.md)
+- Урок 30. Як PowerShell керує іншими комп’ютерами
 
 ### Модуль 9. Фінальний проєкт *(готується)*
-- [Огляд модуля і підсумковий тест](lessons/09-finalnyi-proyekt/README.md)
-- [Урок 31. Наводимо лад у «Завантаженнях»](lessons/09-finalnyi-proyekt/31-navodymo-lad-u-zavantazhennyakh.md)
+- Урок 31. Наводимо лад у «Завантаженнях»
 
 ## Позначки в уроках
 
