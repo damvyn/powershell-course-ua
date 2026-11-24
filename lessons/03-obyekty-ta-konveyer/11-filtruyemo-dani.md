@@ -1,0 +1,275 @@
+# Урок 11. Фільтруємо дані
+
+⏱ ~30 хв · Рівень: початковий · Потрібно: [урок 10](10-konveyer.md)
+
+## Що ви вмітимете після уроку
+
+- залишати в конвеєрі лише ті об’єкти, що відповідають умові (`Where-Object`);
+- порівнювати числа, текст і дати операторами `-eq`, `-gt`, `-lt`, `-like`, `-match`;
+- поєднувати кілька умов через `-and`, `-or`, `-not`;
+- знаходити великі й давні файли, щоб звільнити місце.
+
+## Ситуація з життя
+
+У «Завантаженнях» роками збираються інсталятори й архіви. Хочеться знайти файли, **більші за 100 МБ**, яких ви **не відкривали понад пів року**. Сортування з уроку 10 тут не допоможе: потрібен фільтр за двома умовами одночасно.
+
+## Пояснення (~15 хв)
+
+### 1. Where-Object і `$_`
+
+`Where-Object` пропускає далі конвеєром лише ті об’єкти, для яких умова правдива:
+
+```powershell
+Get-Service | Where-Object { $_.Status -eq "Running" }
+```
+
+Так ви отримаєте лише запущені служби Windows.
+
+Як читати:
+
+- `{ ... }` — фігурні дужки, у яких записана умова;
+- `$_` — «поточний об’єкт», тобто той, що саме зараз проходить конвеєром. `$_.Status` — його властивість `Status`;
+- `-eq` — оператор «дорівнює».
+
+> [!IMPORTANT]
+> У PowerShell для порівняння **не використовують** звичні знаки `=`, `>` і `<`. Замість них пишуть оператори з дефісом: `-eq`, `-gt`, `-lt`. Знак `=` означає «присвоїти значення», а `>` — «записати у файл» (урок 7). Що буде, якщо їх переплутати, дивіться в «Типових помилках».
+
+### 2. Оператори порівняння
+
+| Оператор | Означає | Англійською | Приклад |
+|---|---|---|---|
+| `-eq` | дорівнює | **eq**ual | `$_.Extension -eq ".pdf"` |
+| `-ne` | не дорівнює | **n**ot **e**qual | `$_.Status -ne "Running"` |
+| `-gt` | більше | **g**reater **t**han | `$_.Length -gt 100MB` |
+| `-ge` | більше або дорівнює | **g**reater or **e**qual | `$_.Length -ge 1GB` |
+| `-lt` | менше | **l**ess **t**han | `$_.LastWriteTime -lt (Get-Date).AddMonths(-6)` |
+| `-le` | менше або дорівнює | **l**ess or **e**qual | `$_.Length -le 1KB` |
+| `-like` | схоже на маску з `*` і `?` | like | `$_.Name -like "*звіт*"` |
+| `-match` | відповідає шаблону | match | `$_.Name -match "2026"` |
+
+> [!TIP]
+> PowerShell розуміє скорочення розмірів: `1KB`, `100MB`, `2GB`. Пишіть їх **без пробілу**. `100MB` — це 104 857 600 байтів, рахувати самому не треба.
+
+Порівняння тексту за замовчуванням **не розрізняє** великі й малі літери: `"PDF" -eq "pdf"` дає `True`.
+
+**Спробуйте самі:**
+
+1. Файли, більші за 100 МБ, у «Завантаженнях»:
+
+```powershell
+Get-ChildItem $HOME\Downloads -File | Where-Object { $_.Length -gt 100MB }
+```
+
+2. Файли, у назві яких є слово «рахунок»:
+
+```powershell
+Get-ChildItem $HOME\Downloads -File | Where-Object { $_.Name -like "*рахунок*" }
+```
+
+3. Файли, які не змінювали понад пів року. `(Get-Date).AddMonths(-6)` — це дата пів року тому (урок 9):
+
+```powershell
+Get-ChildItem $HOME\Downloads -File | Where-Object { $_.LastWriteTime -lt (Get-Date).AddMonths(-6) }
+```
+
+### 3. Кілька умов: -and, -or, -not
+
+| Оператор | Означає |
+|---|---|
+| `-and` | обидві умови правдиві |
+| `-or` | хоча б одна умова правдива |
+| `-not` | навпаки: правдиве стає хибним |
+
+Тепер завдання з початку уроку — великі **і** давні файли:
+
+```powershell
+Get-ChildItem $HOME\Downloads -File |
+    Where-Object { $_.Length -gt 100MB -and $_.LastWriteTime -lt (Get-Date).AddMonths(-6) } |
+    Select-Object Name, Length, LastWriteTime
+```
+
+Інсталятори **або** архіви:
+
+```powershell
+Get-ChildItem $HOME\Downloads -File | Where-Object { $_.Extension -eq ".exe" -or $_.Extension -eq ".zip" }
+```
+
+### 4. Коротший запис
+
+Для простої умови з однією властивістю можна обійтися без `{ }` і `$_`:
+
+```powershell
+Get-Service | Where-Object Status -eq Running
+```
+
+Це те саме, що `Where-Object { $_.Status -eq "Running" }`. Але для кількох умов (`-and`, `-or`) або для обчислень на кшталт `(Get-Date).AddMonths(-6)` потрібен повний запис з фігурними дужками.
+
+> [!TIP]
+> Якщо команда має власний фільтр, використовуйте спершу його: він працює швидше. Наприклад, `Get-ChildItem -Filter *.pdf` швидше, ніж `Get-ChildItem | Where-Object { $_.Extension -eq ".pdf" }`, особливо у великих папках.
+
+> [!NOTE]
+> **PowerShell 7:** з’явилися короткі оператори з інших мов програмування: тернарний `умова ? так : ні` і `??` («якщо порожньо, то…»). У 5.1 їх немає. Для фільтрації вони не потрібні, у курсі ми обходимося без них.
+
+## Типові помилки
+
+### ❌ `>` замість `-gt`
+
+```powershell
+Get-ChildItem $HOME\Downloads -File | Where-Object { $_.Length > 100MB }
+```
+
+**Що сталося:** команда нічого не вивела, а в поточній папці з’явився файл з назвою `100MB`.
+
+**Чому:** `>` — це не «більше», а перенаправлення у файл (урок 7). PowerShell записав розмір кожного файлу у файл `100MB`, а умова завжди виявлялася «порожньою», тому жоден файл фільтр не пройшов.
+
+### ✅ Правильно
+
+```powershell
+Remove-Item .\100MB                       # прибираємо випадковий файл
+Get-ChildItem $HOME\Downloads -File | Where-Object { $_.Length -gt 100MB }
+```
+
+---
+
+### ❌ `=` замість `-eq`
+
+```powershell
+Get-Service | Where-Object { $_.Status = "Running" }
+```
+
+```text
+'Status' is a ReadOnly property.
+```
+
+**Чому:** `=` означає «присвоїти». PowerShell спробував **змінити** стан кожної служби на `Running`, але змінювати цю властивість не можна. З іншими об’єктами таке присвоєння могло б спрацювати й непомітно зіпсувати дані.
+
+### ✅ Правильно
+
+```powershell
+Get-Service | Where-Object { $_.Status -eq "Running" }
+```
+
+---
+
+### ❌ `-like` без зірочок
+
+```powershell
+Get-ChildItem $HOME\Downloads -File | Where-Object { $_.Name -like "рахунок" }
+```
+
+**Що сталося:** порожній результат, хоча файл `рахунок-газ.pdf` є.
+
+**Чому:** без `*` оператор `-like` працює як `-eq`: шукає назву, яка **точно** дорівнює «рахунок».
+
+### ✅ Правильно
+
+```powershell
+Get-ChildItem $HOME\Downloads -File | Where-Object { $_.Name -like "*рахунок*" }
+```
+
+---
+
+### ❌ Пробіл у розмірі
+
+```powershell
+Get-ChildItem $HOME\Downloads -File | Where-Object { $_.Length -gt 100 MB }
+```
+
+```text
+Unexpected token 'MB' in expression or statement.
+```
+
+**Чому:** `100 MB` з пробілом — це число `100` і незрозуміле слово `MB`.
+
+### ✅ Правильно
+
+Пишіть разом: `100MB`.
+
+## Підсумок
+
+| Що | Як |
+|---|---|
+| Фільтр | `... \| Where-Object { умова }` |
+| Поточний об’єкт | `$_`, його властивість — `$_.Назва` |
+| Порівняння | `-eq -ne -gt -ge -lt -le` |
+| Пошук за маскою | `-like "*текст*"` |
+| Кілька умов | `-and`, `-or`, `-not` |
+| Розміри | `1KB`, `100MB`, `2GB` (без пробілу) |
+| Дата в минулому | `(Get-Date).AddMonths(-6)` |
+| Короткий запис | `Where-Object Status -eq Running` |
+
+## Перевір себе (~5 хв)
+
+1. Що означає `$_` у `Where-Object { $_.Length -gt 1MB }`?
+2. Чому в умові не можна писати `>` замість `-gt`?
+3. Яка умова знайде файли з розширенням `.jpg` **або** `.png`?
+4. Чим `-like "звіт"` відрізняється від `-like "звіт*"`?
+5. Як записати умову «файл змінено протягом останніх 7 днів»?
+
+<details>
+<summary>Відповіді</summary>
+
+1. Поточний об’єкт у конвеєрі, тобто файл, який зараз перевіряється.
+2. `>` записує результат у файл. Умова не спрацює, а в папці з’явиться зайвий файл.
+3. `{ $_.Extension -eq ".jpg" -or $_.Extension -eq ".png" }`.
+4. `"звіт"` знайде лише назву, що точно дорівнює «звіт», а `"звіт*"` — усі назви, що **починаються** зі «звіт».
+5. `{ $_.LastWriteTime -gt (Get-Date).AddDays(-7) }`.
+
+</details>
+
+## Практика (~10 хв)
+
+**Завдання 1** (легке). Виведіть служби Windows, які **зупинені** (`Stopped`). Спробуйте і повний, і короткий запис.
+
+<details>
+<summary>Розв’язок</summary>
+
+```powershell
+Get-Service | Where-Object { $_.Status -eq "Stopped" }
+Get-Service | Where-Object Status -eq Stopped
+```
+
+</details>
+
+**Завдання 2.** Знайдіть у папці «Зображення» (разом із вкладеними папками) усі фото `.jpg`, які більші за 5 МБ. Виведіть лише назву й розмір, від найбільшого до найменшого.
+
+<details>
+<summary>Розв’язок</summary>
+
+```powershell
+Get-ChildItem $HOME\Pictures -Filter *.jpg -Recurse |
+    Where-Object { $_.Length -gt 5MB } |
+    Sort-Object Length -Descending |
+    Select-Object Name, Length
+```
+
+Фільтр за розширенням тут зроблено параметром `-Filter`: так швидше, ніж через `Where-Object`.
+
+</details>
+
+**Завдання 3** ⭐. Знайдіть у «Завантаженнях» інсталятори (`.exe` і `.msi`), старші за 3 місяці, і перевірте з `-WhatIf`, що їх можна видалити. Самі файли не видаляйте, якщо не впевнені.
+
+<details>
+<summary>Розв’язок</summary>
+
+```powershell
+Get-ChildItem $HOME\Downloads -File |
+    Where-Object { ($_.Extension -eq ".exe" -or $_.Extension -eq ".msi") -and $_.LastWriteTime -lt (Get-Date).AddMonths(-3) } |
+    Remove-Item -WhatIf
+```
+
+Круглі дужки навколо `-or` потрібні, щоб спершу перевірити розширення, а вже потім дату. Без них умова читалася б як «`.exe` будь-якої дати **або** старий `.msi`».
+
+</details>
+
+## Джерела
+
+- [Where-Object](https://learn.microsoft.com/powershell/module/microsoft.powershell.core/where-object?view=powershell-5.1)
+- [about_Comparison_Operators](https://learn.microsoft.com/powershell/module/microsoft.powershell.core/about/about_comparison_operators?view=powershell-5.1)
+- [about_Logical_Operators](https://learn.microsoft.com/powershell/module/microsoft.powershell.core/about/about_logical_operators?view=powershell-5.1)
+- [about_Automatic_Variables — `$_`](https://learn.microsoft.com/powershell/module/microsoft.powershell.core/about/about_automatic_variables?view=powershell-5.1)
+- [about_Numeric_Literals — суфікси KB, MB, GB](https://learn.microsoft.com/powershell/module/microsoft.powershell.core/about/about_numeric_literals?view=powershell-5.1)
+- [What’s new in PowerShell 7.0 — тернарний оператор і `??`](https://learn.microsoft.com/powershell/scripting/whats-new/what-s-new-in-powershell-70)
+
+---
+[← Урок 10](10-konveyer.md) · [Зміст курсу](../../README.md) · [Урок 12. Гарний вивід і підрахунки →](12-vyvid-i-pidrakhunky.md)
