@@ -20,18 +20,18 @@
 
 PowerShell сам вирішує, як показати результат: таблицею, якщо властивостей мало, або списком, якщо багато. Але ви можете вибрати самі.
 
-**Таблиця з потрібними стовпцями:**
+**Таблиця з потрібними стовпцями.** П’ять найбільших файлів у «Завантаженнях»: назва, розмір і повний шлях:
 
 ```powershell
-Get-Process | Sort-Object WorkingSet -Descending | Select-Object -First 5 | Format-Table Name, Id, WorkingSet -AutoSize
+Get-ChildItem $HOME\Downloads -File | Sort-Object Length -Descending | Select-Object -First 5 | Format-Table Name, Length, FullName -AutoSize
 ```
 
 `-AutoSize` підганяє ширину стовпців під вміст, щоб текст не обрізався трикрапкою `...`.
 
-**Список: кожна властивість з нового рядка.** Зручно, коли об’єкт один, а властивостей багато:
+**Список: кожна властивість з нового рядка.** Зручно, коли об’єкт один, а властивостей багато. Усе про найбільший файл у «Завантаженнях»:
 
 ```powershell
-Get-Item $HOME\PS-Kurs\покупки.txt | Format-List *
+Get-ChildItem $HOME\Downloads -File | Sort-Object Length -Descending | Select-Object -First 1 | Format-List *
 ```
 
 Зірочка `*` означає «усі властивості». Так видно навіть ті, що не показуються за замовчуванням.
@@ -42,7 +42,7 @@ Get-Item $HOME\PS-Kurs\покупки.txt | Format-List *
 ### 2. Вікно з таблицею: Out-GridView
 
 ```powershell
-Get-Process | Out-GridView
+Get-ChildItem $HOME\Downloads -File | Out-GridView
 ```
 
 Відкриється окреме вікно з таблицею. У ньому можна:
@@ -153,20 +153,20 @@ Setup_Office.exe                   393,7
 ### ❌ Format-Table посеред конвеєра
 
 ```powershell
-Get-Process | Format-Table Name, WorkingSet | Export-Csv процеси.csv
+Get-ChildItem $HOME\Downloads -File | Format-Table Name, Length | Export-Csv $HOME\PS-Kurs\завантаження.csv
 ```
 
-У файлі замість назв процесів будуть рядки на кшталт `"ClassId2e4f51ef21dd47e99d3c952918aff9cd","pageHeaderEntry",...`.
+Відкрийте файл (`notepad $HOME\PS-Kurs\завантаження.csv`): замість назв файлів там рядки на кшталт рядки на кшталт `"ClassId2e4f51ef21dd47e99d3c952918aff9cd","pageHeaderEntry",...`.
 
-**Чому:** `Format-Table` повертає не процеси, а службові об’єкти для малювання таблиці на екрані. Наступні команди отримують саме їх.
+**Чому:** `Format-Table` повертає не файли, а службові об’єкти для малювання таблиці на екрані. Наступні команди отримують саме їх.
 
 ### ✅ Правильно
 
 Для вибору стовпців посеред конвеєра використовуйте `Select-Object`, а `Format-Table` ставте лише в кінець:
 
 ```powershell
-Get-Process | Sort-Object WorkingSet -Descending | Select-Object Name, WorkingSet | Export-Csv процеси.csv
-Get-Process | Sort-Object WorkingSet -Descending | Format-Table Name, WorkingSet -AutoSize
+Get-ChildItem $HOME\Downloads -File | Select-Object Name, Length | Export-Csv $HOME\PS-Kurs\завантаження.csv
+Get-ChildItem $HOME\Downloads -File | Format-Table Name, Length -AutoSize
 ```
 
 ---

@@ -17,29 +17,35 @@
 
 ### 1. Where-Object і `$_`
 
-`Where-Object` пропускає далі конвеєром лише ті об’єкти, для яких умова правдива:
+Почнемо з першої умови нашого завдання: файли, більші за 100 МБ.
+
+> [!IMPORTANT]
+> У PowerShell для порівняння **не використовують** звичні знаки `=`, `>` і `<`. Замість них пишуть оператори з дефісом: `-eq`, `-gt`, `-lt`. Знак `=` означає «присвоїти значення», а `>` — «записати у файл» (урок 7). Що буде, якщо їх переплутати, дивіться в «Типових помилках».
+
+> [!TIP]
+> PowerShell розуміє скорочення розмірів: `1KB`, `100MB`, `2GB`. Пишіть їх **без пробілу**. `100MB` — це 104 857 600 байтів, рахувати самому не треба.
 
 ```powershell
-Get-Service | Where-Object { $_.Status -eq "Running" }
+Get-ChildItem $HOME\Downloads -File | Where-Object { $_.Length -gt 100MB }
 ```
 
-Так ви отримаєте лише запущені служби Windows.
+`Where-Object` пропускає далі конвеєром лише ті файли, для яких умова правдива. Решта відкидається.
 
 Як читати:
 
 - `{ ... }` — фігурні дужки, у яких записана умова;
-- `$_` — «поточний об’єкт», тобто той, що саме зараз проходить конвеєром. `$_.Status` — його властивість `Status`;
-- `-eq` — оператор «дорівнює».
+- `$_` — «поточний об’єкт», тобто файл, який саме зараз проходить конвеєром. `$_.Length` — його розмір (урок 9);
+- `-gt` — оператор «більше» (**g**reater **t**han);
+- `100MB` — 100 мегабайтів.
 
-> [!IMPORTANT]
-> У PowerShell для порівняння **не використовують** звичні знаки `=`, `>` і `<`. Замість них пишуть оператори з дефісом: `-eq`, `-gt`, `-lt`. Знак `=` означає «присвоїти значення», а `>` — «записати у файл» (урок 7). Що буде, якщо їх переплутати, дивіться в «Типових помилках».
+Разом: «пропусти файл, якщо його розмір більший за 100 МБ».
 
 ### 2. Оператори порівняння
 
 | Оператор | Означає | Англійською | Приклад |
 |---|---|---|---|
 | `-eq` | дорівнює | **eq**ual | `$_.Extension -eq ".pdf"` |
-| `-ne` | не дорівнює | **n**ot **e**qual | `$_.Status -ne "Running"` |
+| `-ne` | не дорівнює | **n**ot **e**qual | `$_.Extension -ne ".tmp"` |
 | `-gt` | більше | **g**reater **t**han | `$_.Length -gt 100MB` |
 | `-ge` | більше або дорівнює | **g**reater or **e**qual | `$_.Length -ge 1GB` |
 | `-lt` | менше | **l**ess **t**han | `$_.LastWriteTime -lt (Get-Date).AddMonths(-6)` |
@@ -47,29 +53,21 @@ Get-Service | Where-Object { $_.Status -eq "Running" }
 | `-like` | схоже на маску з `*` і `?` | like | `$_.Name -like "*звіт*"` |
 | `-match` | відповідає шаблону | match | `$_.Name -match "2026"` |
 
-> [!TIP]
-> PowerShell розуміє скорочення розмірів: `1KB`, `100MB`, `2GB`. Пишіть їх **без пробілу**. `100MB` — це 104 857 600 байтів, рахувати самому не треба.
-
 Порівняння тексту за замовчуванням **не розрізняє** великі й малі літери: `"PDF" -eq "pdf"` дає `True`.
 
-**Спробуйте самі:**
-
-1. Файли, більші за 100 МБ, у «Завантаженнях»:
-
-```powershell
-Get-ChildItem $HOME\Downloads -File | Where-Object { $_.Length -gt 100MB }
-```
-
-2. Файли, у назві яких є слово «рахунок»:
-
-```powershell
-Get-ChildItem $HOME\Downloads -File | Where-Object { $_.Name -like "*рахунок*" }
-```
-
-3. Файли, які не змінювали понад пів року. `(Get-Date).AddMonths(-6)` — це дата пів року тому (урок 9):
+Тепер друга умова нашого завдання: файли, які не змінювали понад пів року. `(Get-Date).AddMonths(-6)` — це дата пів року тому (урок 9), а `-lt` («менше») для дат означає «раніше»:
 
 ```powershell
 Get-ChildItem $HOME\Downloads -File | Where-Object { $_.LastWriteTime -lt (Get-Date).AddMonths(-6) }
+```
+
+> [!NOTE]
+> Дата останнього **відкриття** файлу (`LastAccessTime`) у Windows часто не оновлюється, щоб не сповільнювати диск, тому ми перевіряємо дату останньої **зміни** (`LastWriteTime`). Для інсталяторів і архівів у «Завантаженнях» це майже завжди дата, коли файл завантажили.
+
+**Спробуйте самі:** знайдіть у «Завантаженнях» файли, у назві яких є слово «рахунок»:
+
+```powershell
+Get-ChildItem $HOME\Downloads -File | Where-Object { $_.Name -like "*рахунок*" }
 ```
 
 ### 3. Кілька умов: -and, -or, -not
@@ -80,7 +78,7 @@ Get-ChildItem $HOME\Downloads -File | Where-Object { $_.LastWriteTime -lt (Get-D
 | `-or` | хоча б одна умова правдива |
 | `-not` | навпаки: правдиве стає хибним |
 
-Тепер завдання з початку уроку — великі **і** давні файли:
+Тепер з’єднаємо обидві умови із завдання на початку уроку — файли великі **і** давні:
 
 ```powershell
 Get-ChildItem $HOME\Downloads -File |
@@ -88,7 +86,7 @@ Get-ChildItem $HOME\Downloads -File |
     Select-Object Name, Length, LastWriteTime
 ```
 
-Інсталятори **або** архіви:
+А щоб побачити серед «Завантажень» лише інсталятори **або** архіви:
 
 ```powershell
 Get-ChildItem $HOME\Downloads -File | Where-Object { $_.Extension -eq ".exe" -or $_.Extension -eq ".zip" }
@@ -99,10 +97,10 @@ Get-ChildItem $HOME\Downloads -File | Where-Object { $_.Extension -eq ".exe" -or
 Для простої умови з однією властивістю можна обійтися без `{ }` і `$_`:
 
 ```powershell
-Get-Service | Where-Object Status -eq Running
+Get-ChildItem $HOME\Downloads -File | Where-Object Length -gt 100MB
 ```
 
-Це те саме, що `Where-Object { $_.Status -eq "Running" }`. Але для кількох умов (`-and`, `-or`) або для обчислень на кшталт `(Get-Date).AddMonths(-6)` потрібен повний запис з фігурними дужками.
+Це те саме, що `Where-Object { $_.Length -gt 100MB }`. Але для кількох умов (`-and`, `-or`) або для обчислень на кшталт `(Get-Date).AddMonths(-6)` потрібен повний запис з фігурними дужками.
 
 > [!TIP]
 > Якщо команда має власний фільтр, використовуйте спершу його: він працює швидше. Наприклад, `Get-ChildItem -Filter *.pdf` швидше, ніж `Get-ChildItem | Where-Object { $_.Extension -eq ".pdf" }`, особливо у великих папках.
@@ -134,19 +132,19 @@ Get-ChildItem $HOME\Downloads -File | Where-Object { $_.Length -gt 100MB }
 ### ❌ `=` замість `-eq`
 
 ```powershell
-Get-Service | Where-Object { $_.Status = "Running" }
+Get-ChildItem $HOME\Downloads -File | Where-Object { $_.Extension = ".zip" }
 ```
 
 ```text
-'Status' is a ReadOnly property.
+'Extension' is a ReadOnly property.
 ```
 
-**Чому:** `=` означає «присвоїти». PowerShell спробував **змінити** стан кожної служби на `Running`, але змінювати цю властивість не можна. З іншими об’єктами таке присвоєння могло б спрацювати й непомітно зіпсувати дані.
+**Чому:** `=` означає «присвоїти». PowerShell спробував **змінити** розширення кожного файлу на `.zip`, але змінювати цю властивість не можна. З іншими об’єктами таке присвоєння могло б спрацювати й непомітно зіпсувати дані.
 
 ### ✅ Правильно
 
 ```powershell
-Get-Service | Where-Object { $_.Status -eq "Running" }
+Get-ChildItem $HOME\Downloads -File | Where-Object { $_.Extension -eq ".zip" }
 ```
 
 ---
@@ -196,7 +194,7 @@ Unexpected token 'MB' in expression or statement.
 | Кілька умов | `-and`, `-or`, `-not` |
 | Розміри | `1KB`, `100MB`, `2GB` (без пробілу) |
 | Дата в минулому | `(Get-Date).AddMonths(-6)` |
-| Короткий запис | `Where-Object Status -eq Running` |
+| Короткий запис | `Where-Object Length -gt 100MB` |
 
 ## Перевір себе (~5 хв)
 
@@ -219,14 +217,14 @@ Unexpected token 'MB' in expression or statement.
 
 ## Практика (~10 хв)
 
-**Завдання 1** (легке). Виведіть служби Windows, які **зупинені** (`Stopped`). Спробуйте і повний, і короткий запис.
+**Завдання 1** (легке). Знайдіть у «Завантаженнях» усі ZIP-архіви за допомогою `Where-Object`. Спробуйте і повний, і короткий запис.
 
 <details>
 <summary>Розв’язок</summary>
 
 ```powershell
-Get-Service | Where-Object { $_.Status -eq "Stopped" }
-Get-Service | Where-Object Status -eq Stopped
+Get-ChildItem $HOME\Downloads -File | Where-Object { $_.Extension -eq ".zip" }
+Get-ChildItem $HOME\Downloads -File | Where-Object Extension -eq .zip
 ```
 
 </details>
