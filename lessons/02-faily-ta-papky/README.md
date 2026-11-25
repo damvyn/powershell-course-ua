@@ -130,4 +130,4 @@ notepad про-компютер.txt
 </details>
 
 ---
-[← Урок 8](08-dysky-powershell.md) · [Зміст курсу](../../README.md)
+[← Урок 8](08-dysky-powershell.md) · [Зміст курсу](../../README.md) · [Модуль 3. Об’єкти та конвеєр →](../03-obyekty-ta-konveyer/09-use-ye-obyektom.md)

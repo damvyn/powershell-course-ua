@@ -33,11 +33,12 @@
 - [Урок 7. Текстові файли](lessons/02-faily-ta-papky/07-tekstovi-faily.md)
 - [Урок 8. Диски PowerShell](lessons/02-faily-ta-papky/08-dysky-powershell.md)
 
-### Модуль 3. Об’єкти та конвеєр *(готується)*
-- Урок 9. Усе є об’єктом
-- Урок 10. Конвеєр «|»
-- Урок 11. Фільтруємо дані
-- Урок 12. Гарний вивід і підрахунки
+### Модуль 3. Об’єкти та конвеєр
+- [Огляд модуля і підсумковий тест](lessons/03-obyekty-ta-konveyer/README.md)
+- [Урок 9. Усе є об’єктом](lessons/03-obyekty-ta-konveyer/09-use-ye-obyektom.md)
+- [Урок 10. Конвеєр «|»](lessons/03-obyekty-ta-konveyer/10-konveyer.md)
+- [Урок 11. Фільтруємо дані](lessons/03-obyekty-ta-konveyer/11-filtruyemo-dani.md)
+- [Урок 12. Гарний вивід і підрахунки](lessons/03-obyekty-ta-konveyer/12-vyvid-i-pidrakhunky.md)
 
 ### Модуль 4. Змінні та типи даних *(готується)*
 - Урок 13. Змінні
