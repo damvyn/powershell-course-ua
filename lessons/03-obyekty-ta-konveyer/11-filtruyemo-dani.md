@@ -118,14 +118,17 @@ Get-ChildItem $HOME\Downloads -File | Where-Object { $_.LastWriteTime -gt (Get-D
 
 ```powershell
 Get-ChildItem $HOME\Downloads -File |
-    Where-Object { $_.Length -gt 100MB -and $_.LastWriteTime -lt (Get-Date).AddMonths(-6) } |
+    Where-Object { ($_.Length -gt 100MB) -and ($_.LastWriteTime -lt (Get-Date).AddMonths(-6)) } |
     Select-Object Name, Length, LastWriteTime
 ```
+
+> [!TIP]
+> Круглі дужки навколо кожної умови не обов’язкові: без них команда спрацює так само. Але вони значно полегшують читання довгих виразів: одразу видно, де закінчується одна умова й починається інша. У курсі ми завжди братимемо умови в дужки.
 
 А щоб побачити серед «Завантажень» лише інсталятори **або** архіви:
 
 ```powershell
-Get-ChildItem $HOME\Downloads -File | Where-Object { $_.Extension -eq ".exe" -or $_.Extension -eq ".zip" }
+Get-ChildItem $HOME\Downloads -File | Where-Object { ($_.Extension -eq ".exe") -or ($_.Extension -eq ".zip") }
 ```
 
 ### 4. Коротший запис
@@ -245,7 +248,7 @@ Unexpected token 'MB' in expression or statement.
 
 1. Поточний об’єкт у конвеєрі, тобто файл, який зараз перевіряється.
 2. `>` записує результат у файл. Умова не спрацює, а в папці з’явиться зайвий файл.
-3. `{ $_.Extension -eq ".jpg" -or $_.Extension -eq ".png" }`.
+3. `{ ($_.Extension -eq ".jpg") -or ($_.Extension -eq ".png") }`.
 4. `"звіт"` знайде лише назву, що точно дорівнює «звіт», а `"звіт*"` — усі назви, що **починаються** зі «звіт».
 5. `{ $_.LastWriteTime -gt (Get-Date).AddDays(-7) }`.
 
@@ -288,11 +291,11 @@ Get-ChildItem $HOME\Pictures -Filter *.jpg -Recurse |
 
 ```powershell
 Get-ChildItem $HOME\Downloads -File |
-    Where-Object { ($_.Extension -eq ".exe" -or $_.Extension -eq ".msi") -and $_.LastWriteTime -lt (Get-Date).AddMonths(-3) } |
+    Where-Object { (($_.Extension -eq ".exe") -or ($_.Extension -eq ".msi")) -and ($_.LastWriteTime -lt (Get-Date).AddMonths(-3)) } |
     Remove-Item -WhatIf
 ```
 
-Круглі дужки навколо `-or` потрібні, щоб спершу перевірити розширення, а вже потім дату. Без них умова читалася б як «`.exe` будь-якої дати **або** старий `.msi`».
+Зовнішні дужки навколо пари з `-or` одразу показують задум: «(`.exe` **або** `.msi`) **і** старший за 3 місяці». Без них PowerShell виконує `-and` і `-or` просто зліва направо, і в довшій умові легко помилитися, що з чим поєднано.
 
 </details>
 
