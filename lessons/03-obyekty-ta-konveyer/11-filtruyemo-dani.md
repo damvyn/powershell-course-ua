@@ -80,11 +80,31 @@ Get-ChildItem $HOME\Downloads -File | Where-Object { $_.LastWriteTime -lt (Get-D
 > [!NOTE]
 > Дата останнього **відкриття** файлу (`LastAccessTime`) у Windows часто не оновлюється, щоб не сповільнювати диск, тому ми перевіряємо дату останньої **зміни** (`LastWriteTime`). Для інсталяторів і архівів у «Завантаженнях» це майже завжди дата, коли файл завантажили.
 
-**Спробуйте самі:** знайдіть у «Завантаженнях» файли, у назві яких є слово «рахунок»:
+**Спробуйте самі:**
+
+1. Порівняйте обидві дати для своїх файлів у «Завантаженнях»:
 
 ```powershell
-Get-ChildItem $HOME\Downloads -File | Where-Object { $_.Name -like "*рахунок*" }
+Get-ChildItem $HOME\Downloads -File | Select-Object Name, LastWriteTime, LastAccessTime
 ```
+
+```text
+Name                         LastWriteTime        LastAccessTime
+----                         -------------        --------------
+ChromeSetup.exe              14.03.2025 09:12:40  14.03.2025 09:12:41
+Setup_Office.exe             15.06.2026 10:11:02  15.06.2026 10:11:05
+відео-з-весілля.mp4          03.09.2026 21:05:44  03.09.2026 21:05:44
+```
+
+Відкрийте будь-який із цих файлів (наприклад, PDF або фото), закрийте його і виконайте команду ще раз. Найімовірніше, `LastAccessTime` не зміниться: саме тому фільтрувати за нею ненадійно.
+
+2. Тепер навпаки: знайдіть файли, які з’явилися в «Завантаженнях» за останні 7 днів. Це все, що ви завантажили цього тижня:
+
+```powershell
+Get-ChildItem $HOME\Downloads -File | Where-Object { $_.LastWriteTime -gt (Get-Date).AddDays(-7) }
+```
+
+`-gt` («більше») для дат означає «пізніше».
 
 ### 3. Кілька умов: -and, -or, -not
 
@@ -168,17 +188,17 @@ Get-ChildItem $HOME\Downloads -File | Where-Object { $_.Extension -eq ".zip" }
 ### ❌ `-like` без зірочок
 
 ```powershell
-Get-ChildItem $HOME\Downloads -File | Where-Object { $_.Name -like "рахунок" }
+Get-ChildItem $HOME\Downloads -File | Where-Object { $_.Name -like ".zip" }
 ```
 
-**Що сталося:** порожній результат, хоча файл `рахунок-газ.pdf` є.
+**Що сталося:** порожній результат, хоча ZIP-архіви в «Завантаженнях» є.
 
-**Чому:** без `*` оператор `-like` працює як `-eq`: шукає назву, яка **точно** дорівнює «рахунок».
+**Чому:** без `*` оператор `-like` працює як `-eq`: шукає файл, назва якого **точно** дорівнює `.zip`.
 
 ### ✅ Правильно
 
 ```powershell
-Get-ChildItem $HOME\Downloads -File | Where-Object { $_.Name -like "*рахунок*" }
+Get-ChildItem $HOME\Downloads -File | Where-Object { $_.Name -like "*.zip" }
 ```
 
 ---
