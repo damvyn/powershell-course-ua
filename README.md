@@ -40,11 +40,12 @@
 - [Урок 11. Фільтруємо дані](lessons/03-obyekty-ta-konveyer/11-filtruyemo-dani.md)
 - [Урок 12. Гарний вивід і підрахунки](lessons/03-obyekty-ta-konveyer/12-vyvid-i-pidrakhunky.md)
 
-### Модуль 4. Змінні та типи даних *(готується)*
-- Урок 13. Змінні
-- Урок 14. Числа, дати, так/ні
-- Урок 15. Рядки
-- Урок 16. Списки та таблиці
+### Модуль 4. Змінні та типи даних
+- [Огляд модуля і підсумковий тест](lessons/04-zminni-ta-typy-danykh/README.md)
+- [Урок 13. Змінні](lessons/04-zminni-ta-typy-danykh/13-zminni.md)
+- [Урок 14. Числа, дати, так/ні](lessons/04-zminni-ta-typy-danykh/14-chysla-daty-tak-ni.md)
+- [Урок 15. Рядки](lessons/04-zminni-ta-typy-danykh/15-ryadky.md)
+- [Урок 16. Списки та таблиці](lessons/04-zminni-ta-typy-danykh/16-spysky-ta-tablytsi.md)
 
 ### Модуль 5. Робота з даними *(готується)*
 - Урок 17. CSV та Excel

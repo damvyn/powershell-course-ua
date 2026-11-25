@@ -123,4 +123,4 @@ Get-ChildItem $HOME\Downloads -File |
 </details>
 
 ---
-[← Урок 12](12-vyvid-i-pidrakhunky.md) · [Зміст курсу](../../README.md)
+[← Урок 12](12-vyvid-i-pidrakhunky.md) · [Зміст курсу](../../README.md) · [Модуль 4. Змінні та типи даних →](../04-zminni-ta-typy-danykh/13-zminni.md)
