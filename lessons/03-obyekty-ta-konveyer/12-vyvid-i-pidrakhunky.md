@@ -37,7 +37,7 @@ Get-ChildItem $HOME\Downloads -File | Sort-Object Length -Descending | Select-Ob
 Зірочка `*` означає «усі властивості». Так видно навіть ті, що не показуються за замовчуванням.
 
 > [!IMPORTANT]
-> Команди `Format-*` перетворюють об’єкти на «картинку» для екрана. Після них об’єктів уже немає, тому **`Format-Table` і `Format-List` ставте лише в самому кінці конвеєра**. Після них не можна сортувати, фільтрувати чи зберігати в CSV (див. «Типові помилки»).
+> Команди `Format-*` перетворюють об’єкти на «картинку» для екрана. Після них об’єктів уже немає, тому **`Format-Table` і `Format-List` ставте лише в самому кінці конвеєра**. Після них не можна сортувати, фільтрувати чи рахувати. Дозволені лише команди `Out-*`, наприклад `Out-File`, щоб записати таблицю в текстовий файл (див. «Типові помилки»).
 
 ### 2. Вікно з таблицею: Out-GridView
 
@@ -153,20 +153,28 @@ Setup_Office.exe                   393,7
 ### ❌ Format-Table посеред конвеєра
 
 ```powershell
-Get-ChildItem $HOME\Downloads -File | Format-Table Name, Length | Export-Csv $HOME\PS-Kurs\завантаження.csv
+Get-ChildItem $HOME\Downloads -File | Format-Table Name, Length | Measure-Object Length -Sum
 ```
 
-Відкрийте файл (`notepad $HOME\PS-Kurs\завантаження.csv`): замість назв файлів там рядки на кшталт рядки на кшталт `"ClassId2e4f51ef21dd47e99d3c952918aff9cd","pageHeaderEntry",...`.
+```text
+Measure-Object : The property "Length" cannot be found in the input for any objects.
+```
 
-**Чому:** `Format-Table` повертає не файли, а службові об’єкти для малювання таблиці на екрані. Наступні команди отримують саме їх.
+**Чому:** `Format-Table` повертає не файли, а службові об’єкти для малювання таблиці на екрані. Наступна команда отримує саме їх, а властивості `Length` у них немає.
 
 ### ✅ Правильно
 
-Для вибору стовпців посеред конвеєра використовуйте `Select-Object`, а `Format-Table` ставте лише в кінець:
+Рахуйте, сортуйте й фільтруйте **до** `Format-Table`, а її ставте лише в кінець:
 
 ```powershell
-Get-ChildItem $HOME\Downloads -File | Select-Object Name, Length | Export-Csv $HOME\PS-Kurs\завантаження.csv
-Get-ChildItem $HOME\Downloads -File | Format-Table Name, Length -AutoSize
+Get-ChildItem $HOME\Downloads -File | Measure-Object Length -Sum
+Get-ChildItem $HOME\Downloads -File | Sort-Object Length -Descending | Format-Table Name, Length -AutoSize
+```
+
+Після `Format-Table` можна поставити лише команди `Out-*`. Наприклад, щоб зберегти таблицю в текстовий файл (урок 7):
+
+```powershell
+Get-ChildItem $HOME\Downloads -File | Format-Table Name, Length -AutoSize | Out-File $HOME\PS-Kurs\завантаження.txt
 ```
 
 ---
@@ -224,7 +232,7 @@ Get-ChildItem $HOME\Downloads -File | Select-Object FullName, Length, LastWriteT
 
 ## Перевір себе (~5 хв)
 
-1. Чому `Format-Table` не можна ставити перед `Export-Csv`?
+1. Чому `Format-Table` не можна ставити перед `Measure-Object`?
 2. Яка команда покаже **всі** властивості одного файлу?
 3. Як дізнатися, скільки процесів зараз запущено?
 4. Що покаже стовпець `Count` після `Group-Object Extension`?
@@ -233,7 +241,7 @@ Get-ChildItem $HOME\Downloads -File | Select-Object FullName, Length, LastWriteT
 <details>
 <summary>Відповіді</summary>
 
-1. `Format-Table` перетворює об’єкти на службові об’єкти для екрана, і в CSV потраплять вони, а не ваші дані.
+1. `Format-Table` перетворює об’єкти на службові об’єкти для екрана. У них немає властивостей ваших даних, наприклад `Length`, тож рахувати нічого.
 2. `Get-Item шлях | Format-List *`.
 3. `Get-Process | Measure-Object` (стовпець `Count`).
 4. Скільки файлів з кожним розширенням.
@@ -297,7 +305,7 @@ Get-ChildItem $HOME\Downloads -File |
 - [Measure-Object](https://learn.microsoft.com/powershell/module/microsoft.powershell.utility/measure-object?view=powershell-5.1)
 - [Group-Object](https://learn.microsoft.com/powershell/module/microsoft.powershell.utility/group-object?view=powershell-5.1)
 - [Select-Object — обчислювані властивості](https://learn.microsoft.com/powershell/module/microsoft.powershell.core/about/about_calculated_properties?view=powershell-5.1)
-- [Export-Csv — приклад із Format-Table у конвеєрі](https://learn.microsoft.com/powershell/module/microsoft.powershell.utility/export-csv?view=powershell-5.1)
+- [Out-File](https://learn.microsoft.com/powershell/module/microsoft.powershell.utility/out-file?view=powershell-5.1)
 - [Differences between Windows PowerShell 5.1 and PowerShell 7.x](https://learn.microsoft.com/powershell/scripting/whats-new/differences-from-windows-powershell)
 
 ---
