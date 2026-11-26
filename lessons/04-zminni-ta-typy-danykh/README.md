@@ -100,7 +100,7 @@ Get-ChildItem "$HOME\PS-Kurs\Фото" -Filter "* *.jpg" |
 
 </details>
 
-**Завдання 5.** Створіть список з трьох розширень (`.jpg`, `.png`, `.mp4`) і за його допомогою порахуйте, скільки таких файлів у папці «Зображення» разом із вкладеними. Результат оформіть як `[PSCustomObject]` з властивостями `Типи` (розширення через кому одним рядком) і `Файлів`. *(уроки 15 і 16)*
+**Завдання 5.** Створіть список з трьох розширень (`.jpg`, `.png`, `.mp4`) і за його допомогою порахуйте, скільки таких файлів у папці «Зображення» разом із вкладеними. Результат оформіть як `[PSCustomObject]` з властивостями `Types` (розширення через кому одним рядком) і `Files`. *(уроки 15 і 16)*
 
 <details>
 <summary>Розв’язок</summary>
@@ -109,8 +109,8 @@ Get-ChildItem "$HOME\PS-Kurs\Фото" -Filter "* *.jpg" |
 $types = ".jpg", ".png", ".mp4"
 $media = Get-ChildItem "$HOME\Pictures" -File -Recurse | Where-Object { $_.Extension -in $types }
 [PSCustomObject]@{
-    Типи   = $types -join ", "
-    Файлів = $media.Count
+    Types = $types -join ", "
+    Files = $media.Count
 }
 ```
 

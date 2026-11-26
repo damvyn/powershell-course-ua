@@ -153,12 +153,37 @@ $names["Videos"] = "Відео"
 
 ```powershell
 $summary = [PSCustomObject]@{
-    Дата   = Get-Date -Format "yyyy-MM-dd"
-    Папок  = $folders.Count
-    Файлів = $files.Count
-    ГБ     = [math]::Round(($files | Measure-Object Length -Sum).Sum / 1GB, 1)
+    Date    = Get-Date -Format "yyyy-MM-dd"
+    Folders = $folders.Count
+    Files   = $files.Count
+    GB      = [math]::Round(($files | Measure-Object Length -Sum).Sum / 1GB, 1)
 }
 $summary
+```
+
+```text
+Date       Folders Files   GB
+----       ------- -----   --
+2026-11-25       4  3871 18,6
+```
+
+Це такий самий об’єкт, як файл чи процес (урок 9): у нього є властивості, `$summary.GB` повертає `18,6`, а `$summary | Get-Member` покаже всі чотири властивості. Такий об’єкт можна зберегти у файл CSV, про це — в уроці 17.
+
+> [!TIP]
+> Називайте властивості **англійською**, так само як змінні: так називаються властивості в усіх командах PowerShell (`Name`, `Length`, `LastWriteTime`), і з такими назвами об’єкт без проблем піде далі конвеєром, у CSV чи інший скрипт.
+
+#### Таблиця з українськими заголовками
+
+Якщо підсумок потрібен саме з українськими заголовками, наприклад щоб показати комусь, не змінюйте властивості об’єкта, а перейменуйте стовпці лише **під час виведення**. Це робить `Format-Table` з обчислюваними стовпцями, як `Select-Object` в уроці 12.
+
+> [!WARNING]
+> `Format-Table` лише малює таблицю на екрані, тому вона має бути **останньою** командою конвеєра (урок 12). Якщо підсумок треба зберегти в CSV чи обробити далі, передавайте туди сам `$summary`, а не результат `Format-Table`.
+
+```powershell
+$summary | Format-Table @{ Name = "Дата";   Expression = { $_.Date } },
+                        @{ Name = "Папок";  Expression = { $_.Folders } },
+                        @{ Name = "Файлів"; Expression = { $_.Files } },
+                        @{ Name = "ГБ";     Expression = { $_.GB } }
 ```
 
 ```text
@@ -167,10 +192,7 @@ $summary
 2026-11-25     4   3871 18,6
 ```
 
-Це такий самий об’єкт, як файл чи процес (урок 9): у нього є властивості, `$summary.ГБ` повертає `18,6`, а `$summary | Get-Member` покаже всі чотири властивості. Такий об’єкт можна зберегти у файл CSV, про це — в уроці 17.
-
-> [!TIP]
-> Назви властивостей в `[PSCustomObject]` можуть бути українськими, як у прикладі: вони стануть заголовками стовпців. Якщо в назві є пробіл, візьміть її в лапки: `"Розмір ГБ" = ...`.
+Кома в кінці рядка означає, що список стовпців продовжується на наступному рядку.
 
 ## Типові помилки
 
@@ -276,10 +298,11 @@ $phones = @{ Mama = "0501112233" }
 | Додати | `$a += "новий"` |
 | Чи є в списку | `$a -contains "x"` або `"x" -in $a` |
 | Послідовність чисел | `1..10` |
-| Хеш-таблиця | `@{ Ключ = "значення"; Інший = 5 }` |
-| Значення за ключем | `$h["Ключ"]` або `$h.Ключ` |
+| Хеш-таблиця | `@{ Desktop = "Робочий стіл"; Pictures = "Зображення" }` |
+| Значення за ключем | `$h["Desktop"]` або `$h.Desktop` |
 | Зберегти порядок пар | `[ordered]@{ ... }` |
-| Власний об’єкт | `[PSCustomObject]@{ Властивість = значення }` |
+| Власний об’єкт | `[PSCustomObject]@{ Name = значення }` (назви властивостей англійською) |
+| Українські заголовки на екрані | `... \| Format-Table @{ Name = "Заголовок"; Expression = { $_.Name } }` |
 
 ## Перевір себе (~5 хв)
 
@@ -336,7 +359,7 @@ $phones.Keys
 
 </details>
 
-**Завдання 3** ⭐. Складіть список з двох папок (наприклад, «Документи» і «Зображення») і створіть `[PSCustomObject]` з властивостями `Папок`, `Файлів`, `ГБ` (з одним знаком після коми) і `ЄВідсутні` (`True`, якщо хоча б однієї папки немає).
+**Завдання 3** ⭐. Складіть список з двох папок (наприклад, «Документи» і «Зображення») і створіть `[PSCustomObject]` з властивостями `Folders`, `Files`, `GB` (з одним знаком після коми) і `AnyMissing` (`True`, якщо хоча б однієї папки немає).
 
 <details>
 <summary>Підказка</summary>
@@ -352,10 +375,10 @@ $phones.Keys
 $folders = "$HOME\Documents", "$HOME\Pictures"
 $files = Get-ChildItem $folders -File -Recurse -ErrorAction SilentlyContinue
 [PSCustomObject]@{
-    Папок      = $folders.Count
-    Файлів     = $files.Count
-    ГБ         = [math]::Round(($files | Measure-Object Length -Sum).Sum / 1GB, 1)
-    ЄВідсутні = (Test-Path $folders) -contains $false
+    Folders    = $folders.Count
+    Files      = $files.Count
+    GB         = [math]::Round(($files | Measure-Object Length -Sum).Sum / 1GB, 1)
+    AnyMissing = (Test-Path $folders) -contains $false
 }
 ```
 
@@ -368,6 +391,7 @@ $files = Get-ChildItem $folders -File -Recurse -ErrorAction SilentlyContinue
 - [about_PSCustomObject](https://learn.microsoft.com/powershell/module/microsoft.powershell.core/about/about_pscustomobject?view=powershell-5.1)
 - [about_Comparison_Operators — `-contains`, `-in`](https://learn.microsoft.com/powershell/module/microsoft.powershell.core/about/about_comparison_operators?view=powershell-5.1)
 - [about_Operators — оператор діапазону `..`](https://learn.microsoft.com/powershell/module/microsoft.powershell.core/about/about_operators?view=powershell-5.1)
+- [Format-Table — обчислювані стовпці](https://learn.microsoft.com/powershell/module/microsoft.powershell.utility/format-table?view=powershell-5.1)
 - [Test-Path](https://learn.microsoft.com/powershell/module/microsoft.powershell.management/test-path?view=powershell-5.1)
 
 ---
