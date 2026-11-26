@@ -6,7 +6,7 @@
 
 - зберігати шлях, дату чи результат команди у змінній і використовувати його багато разів;
 - розуміти, що змінна зберігає об’єкти, а не просто текст;
-- переглядати й видаляти свої змінні;
+- розуміти, скільки «живе» змінна;
 - користуватися готовими змінними PowerShell: `$HOME`, `$PWD`, `$null`.
 
 ## Ситуація з життя
@@ -116,36 +116,7 @@ $velyki | Sort-Object Length -Descending | Select-Object -First 3
 > [!WARNING]
 > Не давайте своїм змінним назв готових змінних, наприклад `$HOME` чи `$PWD`. Деякі з них PowerShell не дозволить змінити, а інші зміняться, і команди, що на них покладаються, почнуть працювати неправильно.
 
-### 5. Перегляд і видалення змінних
-
-Усі змінні поточного вікна, і ваші, і готові:
-
-```powershell
-Get-Variable
-```
-
-Лише потрібні, за назвами через кому:
-
-```powershell
-Get-Variable zav, porig, rozmir
-```
-
-```text
-Name                           Value
-----                           -----
-zav                            C:\Users\Andrii\Downloads
-porig                          25.05.2026 21:30:12
-rozmir                         104857600
-```
-
-Видалити змінну:
-
-```powershell
-Remove-Variable velyki
-```
-
-> [!NOTE]
-> У `Get-Variable` і `Remove-Variable` назву змінної пишуть **без** `$`: команда отримує саме назву, а не вміст змінної.
+### 5. Скільки живе змінна
 
 Усі змінні, які ви створили, **зникають після закриття вікна** PowerShell. Як зберегти їх надовго, ви дізнаєтеся в модулі 6 (скрипти та профіль).
 
@@ -215,8 +186,7 @@ $rozmir        # 104857600
 | Подивитися значення | `$nazva` |
 | Зберегти результат команди | `$nazva = команда` |
 | Властивість об’єкта зі змінної | `$nazva.Count`, `$nazva.Length` |
-| Усі змінні | `Get-Variable` |
-| Видалити змінну | `Remove-Variable nazva` (без `$`) |
+| Скільки живе змінна | до закриття вікна PowerShell |
 | «Нічого» | `$null` |
 
 ## Перевір себе (~5 хв)
@@ -225,7 +195,7 @@ $rozmir        # 104857600
 2. Чому після `$velyki = ...` на екрані нічого не з’являється?
 3. Ви видалили половину файлів, але `$velyki.Count` показує стару кількість. Чому?
 4. Що підставить PowerShell, якщо назву змінної написано з помилкою?
-5. Чому в `Remove-Variable zav` немає знака `$`?
+5. Що станеться з вашими змінними після закриття вікна PowerShell?
 
 <details>
 <summary>Відповіді</summary>
@@ -234,7 +204,7 @@ $rozmir        # 104857600
 2. Результат команди потрапив у змінну, а не на екран.
 3. Змінна — знімок на момент виконання команди. Треба виконати присвоєння ще раз.
 4. `$null` («нічого»), без жодної помилки.
-5. Команда отримує **назву** змінної, а `$zav` підставив би її **вміст** (шлях).
+5. Вони зникнуть. У новому вікні їх треба створити знову.
 
 </details>
 
@@ -291,8 +261,6 @@ $stari | Remove-Item -WhatIf
 - [about_Variables](https://learn.microsoft.com/powershell/module/microsoft.powershell.core/about/about_variables?view=powershell-5.1)
 - [about_Automatic_Variables](https://learn.microsoft.com/powershell/module/microsoft.powershell.core/about/about_automatic_variables?view=powershell-5.1)
 - [about_Null](https://learn.microsoft.com/powershell/module/microsoft.powershell.core/about/about_null?view=powershell-5.1)
-- [Get-Variable](https://learn.microsoft.com/powershell/module/microsoft.powershell.utility/get-variable?view=powershell-5.1)
-- [Remove-Variable](https://learn.microsoft.com/powershell/module/microsoft.powershell.utility/remove-variable?view=powershell-5.1)
 
 ---
 [← Модуль 3](../03-obyekty-ta-konveyer/README.md) · [Зміст курсу](../../README.md) · [Урок 14. Числа, дати, так/ні →](14-chysla-daty-tak-ni.md)
