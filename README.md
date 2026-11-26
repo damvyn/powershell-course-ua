@@ -47,10 +47,11 @@
 - [Урок 15. Рядки](lessons/04-zminni-ta-typy-danykh/15-ryadky.md)
 - [Урок 16. Списки та таблиці](lessons/04-zminni-ta-typy-danykh/16-spysky-ta-tablytsi.md)
 
-### Модуль 5. Робота з даними *(готується)*
-- Урок 17. CSV та Excel
-- Урок 18. JSON і дані з інтернету
-- Урок 19. XML коротко
+### Модуль 5. Робота з даними
+- [Огляд модуля і підсумковий тест](lessons/05-robota-z-danymy/README.md)
+- [Урок 17. CSV та Excel](lessons/05-robota-z-danymy/17-csv-ta-excel.md)
+- [Урок 18. JSON і дані з інтернету](lessons/05-robota-z-danymy/18-json-i-dani-z-internetu.md)
+- [Урок 19. XML коротко](lessons/05-robota-z-danymy/19-xml-korotko.md)
 
 ### Модуль 6. Скрипти *(готується)*
 - Урок 20. Перший скрипт

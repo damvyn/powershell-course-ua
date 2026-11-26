@@ -117,4 +117,4 @@ $media = Get-ChildItem "$HOME\Pictures" -File -Recurse | Where-Object { $_.Exten
 </details>
 
 ---
-[← Урок 16](16-spysky-ta-tablytsi.md) · [Зміст курсу](../../README.md)
+[← Урок 16](16-spysky-ta-tablytsi.md) · [Зміст курсу](../../README.md) · [Модуль 5. Робота з даними →](../05-robota-z-danymy/17-csv-ta-excel.md)
