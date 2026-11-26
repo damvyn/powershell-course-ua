@@ -80,7 +80,7 @@ $foto = Get-ChildItem "$HOME\PS-Kurs\Фото" -Filter *.jpg
 | Шаблон | Значення | Результат |
 |---|---|---|
 | `"{0:yyyy-MM-dd}" -f (Get-Date)` | дата | `2026-11-25` |
-| `"{0:dd.MM.yyyy HH:mm}" -f (Get-Date)` | дата й час | `25.11.2026 21:40` |
+| `"{0:yyyy-MM-dd HH:mm}" -f (Get-Date)` | дата й час | `2026-11-25 21:40` |
 | `"{0:N2}" -f 1234.567` | число | `1 234,57` (2 знаки, з розділенням тисяч) |
 | `"{0:N0}" -f 1234.567` | число | `1 235` (без дробової частини) |
 
@@ -173,7 +173,7 @@ What if: Performing the operation "Rename File" on target "Item: C:\Users\Andrii
 $opys = @"
 Поїздка: $poizdka
 Фото: $($foto.Count)
-Опис створено: $(Get-Date -Format "dd.MM.yyyy")
+Опис створено: $(Get-Date -Format "yyyy-MM-dd")
 "@
 Set-Content -Path "$HOME\PS-Kurs\Фото\опис.txt" -Value $opys -Encoding UTF8
 ```
@@ -219,7 +219,7 @@ $den = Get-Date
 
 ```powershell
 "Сьогодні $($den.DayOfWeek)"
-"Сьогодні {0:dd.MM.yyyy}" -f $den
+"Сьогодні {0:yyyy-MM-dd}" -f $den
 ```
 
 ---
@@ -294,7 +294,7 @@ ________________
 | Текст зі змінною | `"Поїздка: $poizdka"` |
 | Текст буквально | `'Ціна: $5'` |
 | Властивість у тексті | `"$($foto.Count) фото"` |
-| Шаблон | `"{0:dd.MM.yyyy} — {1}" -f $data, $tekst` |
+| Шаблон | `"{0:yyyy-MM-dd} — {1}" -f $data, $tekst` |
 | Дата як текст | `Get-Date -Format "yyyy-MM-dd"` |
 | Замінити (шаблон) | `-replace "що", "на що"` |
 | Замінити буквально | `.Replace("що", "на що")` |
@@ -325,14 +325,14 @@ ________________
 
 Виконуйте завдання в папці `$HOME\PS-Kurs\Фото`.
 
-**Завдання 1** (легке). Виведіть рядок на кшталт `Сьогодні 25.11.2026, Wednesday` для сьогоднішньої дати, де дата у форматі `dd.MM.yyyy`, а день тижня — властивість `DayOfWeek` (вона буде англійською, це нормально).
+**Завдання 1** (легке). Виведіть рядок на кшталт `Сьогодні 2026-11-25, Wednesday` для сьогоднішньої дати, де дата у форматі `yyyy-MM-dd`, а день тижня — властивість `DayOfWeek` (вона буде англійською, це нормально).
 
 <details>
 <summary>Розв’язок</summary>
 
 ```powershell
 $den = Get-Date
-"Сьогодні {0:dd.MM.yyyy}, {1}" -f $den, $den.DayOfWeek
+"Сьогодні {0:yyyy-MM-dd}, {1}" -f $den, $den.DayOfWeek
 ```
 
 </details>

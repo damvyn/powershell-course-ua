@@ -153,7 +153,7 @@ $nazvy["Videos"] = "Відео"
 
 ```powershell
 $pidsumok = [PSCustomObject]@{
-    Дата   = Get-Date -Format "dd.MM.yyyy"
+    Дата   = Get-Date -Format "yyyy-MM-dd"
     Папок  = $papky.Count
     Файлів = $fajly.Count
     ГБ     = [math]::Round(($fajly | Measure-Object Length -Sum).Sum / 1GB, 1)
@@ -164,7 +164,7 @@ $pidsumok
 ```text
 Дата       Папок Файлів   ГБ
 ----       ----- ------   --
-25.11.2026     4   3871 18,6
+2026-11-25     4   3871 18,6
 ```
 
 Це такий самий об’єкт, як файл чи процес (урок 9): у нього є властивості, `$pidsumok.ГБ` повертає `18,6`, а `$pidsumok | Get-Member` покаже всі чотири властивості. Такий об’єкт можна зберегти у файл CSV, про це — в уроці 17.
