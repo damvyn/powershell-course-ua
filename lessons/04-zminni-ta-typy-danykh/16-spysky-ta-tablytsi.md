@@ -167,17 +167,17 @@ Date       Folders Files   GB
 2026-11-25       4  3871 18,6
 ```
 
-Це такий самий об’єкт, як файл чи процес (урок 9): у нього є властивості, `$summary.GB` повертає `18,6`, а `$summary | Get-Member` покаже всі чотири властивості. Такий об’єкт можна зберегти у файл CSV, про це — в уроці 17.
+Це такий самий об’єкт, як файл чи процес (урок 9): у нього є властивості, `$summary.GB` повертає `18,6`, а `$summary | Get-Member` покаже всі чотири властивості.
 
 > [!TIP]
-> Називайте властивості **англійською**, так само як змінні: так називаються властивості в усіх командах PowerShell (`Name`, `Length`, `LastWriteTime`), і з такими назвами об’єкт без проблем піде далі конвеєром, у CSV чи інший скрипт.
+> Називайте властивості **англійською**, так само як змінні: так називаються властивості в усіх командах PowerShell (`Name`, `Length`, `LastWriteTime`), і з такими назвами об’єкт без проблем піде далі конвеєром чи в інший скрипт.
 
 #### Таблиця з українськими заголовками
 
 Якщо підсумок потрібен саме з українськими заголовками, наприклад щоб показати комусь, не змінюйте властивості об’єкта, а перейменуйте стовпці лише **під час виведення**. Це робить `Format-Table` з обчислюваними стовпцями, як `Select-Object` в уроці 12.
 
 > [!WARNING]
-> `Format-Table` лише малює таблицю на екрані, тому вона має бути **останньою** командою конвеєра (урок 12). Якщо підсумок треба зберегти в CSV чи обробити далі, передавайте туди сам `$summary`, а не результат `Format-Table`.
+> `Format-Table` лише малює таблицю на екрані, тому вона має бути **останньою** командою конвеєра (урок 12). Якщо підсумок треба сортувати чи рахувати далі, працюйте із самим `$summary`, а не з результатом `Format-Table`.
 
 ```powershell
 $summary | Format-Table @{ Name = "Дата";   Expression = { $_.Date } },
@@ -193,6 +193,8 @@ $summary | Format-Table @{ Name = "Дата";   Expression = { $_.Date } },
 ```
 
 Кома в кінці рядка означає, що список стовпців продовжується на наступному рядку.
+
+Таку таблицю можна зберегти в текстовий файл: після `Format-Table` дозволено ставити команди `Out-*`, зокрема `Out-File` (урок 7). Допишіть у кінець попередньої команди `| Out-File $HOME\PS-Kurs\підсумок.txt` і відкрийте файл: `notepad $HOME\PS-Kurs\підсумок.txt`.
 
 ## Типові помилки
 
@@ -391,6 +393,7 @@ $files = Get-ChildItem $folders -File -Recurse -ErrorAction SilentlyContinue
 - [about_PSCustomObject](https://learn.microsoft.com/powershell/module/microsoft.powershell.core/about/about_pscustomobject?view=powershell-5.1)
 - [about_Comparison_Operators — `-contains`, `-in`](https://learn.microsoft.com/powershell/module/microsoft.powershell.core/about/about_comparison_operators?view=powershell-5.1)
 - [about_Operators — оператор діапазону `..`](https://learn.microsoft.com/powershell/module/microsoft.powershell.core/about/about_operators?view=powershell-5.1)
+- [Out-File](https://learn.microsoft.com/powershell/module/microsoft.powershell.utility/out-file?view=powershell-5.1)
 - [Format-Table — обчислювані стовпці](https://learn.microsoft.com/powershell/module/microsoft.powershell.utility/format-table?view=powershell-5.1)
 - [Test-Path](https://learn.microsoft.com/powershell/module/microsoft.powershell.management/test-path?view=powershell-5.1)
 

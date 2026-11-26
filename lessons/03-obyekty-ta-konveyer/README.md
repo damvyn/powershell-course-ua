@@ -32,10 +32,10 @@ Get-ChildItem | Select-Object -First 5 | Sort-Object LastWriteTime
 Get-ChildItem -Recurse | Where-Object { $_.Length > 1GB }
 ```
 
-**5.** Чому в CSV-файлі після такої команди немає назв процесів? *(урок 12)*
+**5.** Чому ця команда видає помилку замість загального розміру файлів? *(урок 12)*
 
 ```powershell
-Get-Process | Format-Table Name, Id | Export-Csv процеси.csv
+Get-ChildItem $HOME\Downloads -File | Format-Table Name, Length | Measure-Object Length -Sum
 ```
 
 <details>
@@ -45,7 +45,7 @@ Get-Process | Format-Table Name, Id | Export-Csv процеси.csv
 2. Опис методу (`OverloadDefinitions`), а не дату: метод викликано без дужок і без значення. Правильно, наприклад, `(Get-Date).AddMonths(1)`.
 3. Порядок команд: спочатку взято 5 перших файлів за абеткою, а потім відсортовано лише їх. Правильно: `Get-ChildItem | Sort-Object LastWriteTime | Select-Object -First 5`.
 4. `>` — це запис у файл, а не «більше». Розміри записалися у файл `1GB`, а фільтр нічого не пропустив. Правильно: `-gt 1GB`.
-5. `Format-Table` перетворив процеси на службові об’єкти для екрана. Для вибору стовпців перед `Export-Csv` потрібен `Select-Object Name, Id`.
+5. `Format-Table` перетворив файли на службові об’єкти для екрана, у яких немає `Length`. `Format-Table` ставлять лише в кінець: `Get-ChildItem $HOME\Downloads -File | Measure-Object Length -Sum`.
 
 </details>
 
