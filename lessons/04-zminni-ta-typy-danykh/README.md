@@ -16,43 +16,43 @@
 
 ### Питання
 
-**1.** Колега написав `$porig = (Get-Date).AddMonths(-6)`, а наступного дня у новому вікні PowerShell його фільтр `Where-Object { $_.LastWriteTime -lt $porig }` нічого не знаходить. Чому? *(урок 13)*
+**1.** Колега написав `$cutoff = (Get-Date).AddMonths(-6)`, а наступного дня у новому вікні PowerShell його фільтр `Where-Object { $_.LastWriteTime -lt $cutoff }` нічого не знаходить. Чому? *(урок 13)*
 
-**2.** Що буде у змінній `$taryf` після `$taryf = 7,96` і як записати правильно? *(урок 14)*
+**2.** Що буде у змінній `$rate` після `$rate = 7,96` і як записати правильно? *(урок 14)*
 
 **3.** Ви ввели `[datetime]"03.04.2026"`, а отримали 4 березня. Чому і як задати 3 квітня? *(урок 14)*
 
-**4.** Що виведуть ці дві команди, якщо `$imya = "Олена"`? *(урок 15)*
+**4.** Що виведуть ці дві команди, якщо `$name = "Олена"`? *(урок 15)*
 
 ```powershell
-'Привіт, $imya!'
-"Привіт, $imya!"
+'Привіт, $name!'
+"Привіт, $name!"
 ```
 
-**5.** Чому `$papky[1]` повертає другу папку зі списку, а не першу? *(урок 16)*
+**5.** Чому `$folders[1]` повертає другу папку зі списку, а не першу? *(урок 16)*
 
 <details>
 <summary>Відповіді на питання</summary>
 
-1. Змінні зникають після закриття вікна. У новому вікні `$porig` не існує, тобто дорівнює `$null`, і умова «дата раніша за нічого» не виконується для жодного файлу. Змінну треба створити знову.
-2. Список з двох чисел: `7` і `96`. Дробові числа в командах пишуть з крапкою: `$taryf = 7.96`.
+1. Змінні зникають після закриття вікна. У новому вікні `$cutoff` не існує, тобто дорівнює `$null`, і умова «дата раніша за нічого» не виконується для жодного файлу. Змінну треба створити знову.
+2. Список з двох чисел: `7` і `96`. Дробові числа в командах пишуть з крапкою: `$rate = 7.96`.
 3. `[datetime]"..."` читає дату в порядку місяць.день.рік. Правильно задавати дату у форматі рік-місяць-день, який однаково розуміють усі комп’ютери: `Get-Date -Date "2026-04-03"` або `[datetime]"2026-04-03"`.
-4. Перша — `Привіт, $imya!` (в одинарних лапках змінна не підставляється), друга — `Привіт, Олена!`.
-5. Нумерація елементів масиву починається з нуля: перший елемент — `$papky[0]`.
+4. Перша — `Привіт, $name!` (в одинарних лапках змінна не підставляється), друга — `Привіт, Олена!`.
+5. Нумерація елементів масиву починається з нуля: перший елемент — `$folders[0]`.
 
 </details>
 
 ### Практичні завдання
 
-**Завдання 1.** Збережіть у змінну `$pdf` усі PDF-файли з «Завантажень», а потім окремими командами виведіть їх кількість і загальний розмір у МБ, округлений до цілого. *(уроки 13 і 14)*
+**Завдання 1.** Збережіть у змінну `$pdfs` усі PDF-файли з «Завантажень», а потім окремими командами виведіть їх кількість і загальний розмір у МБ, округлений до цілого. *(уроки 13 і 14)*
 
 <details>
 <summary>Розв’язок</summary>
 
 ```powershell
-$pdf = Get-ChildItem "$HOME\Downloads" -Filter *.pdf
-$pdf.Count
-[math]::Round(($pdf | Measure-Object Length -Sum).Sum / 1MB)
+$pdfs = Get-ChildItem "$HOME\Downloads" -Filter *.pdf
+$pdfs.Count
+[math]::Round(($pdfs | Measure-Object Length -Sum).Sum / 1MB)
 ```
 
 </details>
@@ -63,9 +63,9 @@ $pdf.Count
 <summary>Розв’язок</summary>
 
 ```powershell
-$misyatsiv = [math]::Floor(1130 / 250)
-$misyatsiv
-"{0:yyyy-MM-dd}" -f (Get-Date).AddMonths($misyatsiv)
+$months = [math]::Floor(1130 / 250)
+$months
+"{0:yyyy-MM-dd}" -f (Get-Date).AddMonths($months)
 ```
 
 `[math]::Floor` округлює вниз: 4,52 місяця — це 4 повні, на п’ятий грошей уже не вистачить.
@@ -78,9 +78,9 @@ $misyatsiv
 <summary>Розв’язок</summary>
 
 ```powershell
-$nazva = "Звіт_{0:yyyy-MM-dd}.txt" -f (Get-Date)
-$nazva
-New-Item -ItemType File -Path "$HOME\PS-Kurs\$nazva"
+$fileName = "Звіт_{0:yyyy-MM-dd}.txt" -f (Get-Date)
+$fileName
+New-Item -ItemType File -Path "$HOME\PS-Kurs\$fileName"
 ```
 
 </details>
@@ -106,10 +106,10 @@ Get-ChildItem "$HOME\PS-Kurs\Фото" -Filter "* *.jpg" |
 <summary>Розв’язок</summary>
 
 ```powershell
-$typy = ".jpg", ".png", ".mp4"
-$media = Get-ChildItem "$HOME\Pictures" -File -Recurse | Where-Object { $_.Extension -in $typy }
+$types = ".jpg", ".png", ".mp4"
+$media = Get-ChildItem "$HOME\Pictures" -File -Recurse | Where-Object { $_.Extension -in $types }
 [PSCustomObject]@{
-    Типи   = $typy -join ", "
+    Типи   = $types -join ", "
     Файлів = $media.Count
 }
 ```

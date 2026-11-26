@@ -35,15 +35,15 @@ PowerShell рахує, як калькулятор: просто введіть 
 Рахуємо спожиту електроенергію і суму:
 
 ```powershell
-$poperednii = 15230
-$potochnyi  = 15418
-$taryf      = 4.32
+$previous = 15230
+$current  = 15418
+$rate     = 4.32
 
-$spozhyto = $potochnyi - $poperednii
-$suma = $spozhyto * $taryf
+$used = $current - $previous
+$total = $used * $rate
 
-$spozhyto
-$suma
+$used
+$total
 ```
 
 ```text
@@ -56,8 +56,8 @@ $suma
 Зробимо тариф трохи складнішим: з ПДВ він становить, наприклад, 4,32 × 1,2 грн. Сума вийде з багатьма знаками після коми:
 
 ```powershell
-$suma = $spozhyto * $taryf * 1.2
-$suma
+$total = $used * $rate * 1.2
+$total
 ```
 
 ```text
@@ -67,7 +67,7 @@ $suma
 До копійок (2 знаки після коми) округлює `[math]::Round`:
 
 ```powershell
-[math]::Round($suma, 2)
+[math]::Round($total, 2)
 ```
 
 ```text
@@ -128,8 +128,8 @@ dd.MM.yyyy
 Задаємо термін оплати:
 
 ```powershell
-$termin = Get-Date -Date "2026-12-20"
-$termin
+$dueDate = Get-Date -Date "2026-12-20"
+$dueDate
 ```
 
 ```text
@@ -141,7 +141,7 @@ $termin
 Скільки днів залишилось до кінця терміну? Від однієї дати можна відняти іншу:
 
 ```powershell
-$termin - (Get-Date)
+$dueDate - (Get-Date)
 ```
 
 ```text
@@ -157,7 +157,7 @@ TotalDays         : 24,1040162037037
 Результат — це **проміжок часу** з багатьма властивостями. Здається, що досить узяти `.Days`:
 
 ```powershell
-($termin - (Get-Date)).Days
+($dueDate - (Get-Date)).Days
 ```
 
 ```text
@@ -169,7 +169,7 @@ TotalDays         : 24,1040162037037
 Щоб рахувати календарні дні, відніміть сьогоднішню дату **без часу** — `(Get-Date).Date`, тобто сьогодні о 0:00:
 
 ```powershell
-($termin - (Get-Date).Date).Days
+($dueDate - (Get-Date).Date).Days
 ```
 
 ```text
@@ -178,8 +178,8 @@ TotalDays         : 24,1040162037037
 
 | Команда | Що віднімаємо | Проміжок | `.Days` |
 |---|---|---|---|
-| `$termin - (Get-Date)` | 2026-11-25 **21:30** | 24 дні 2 год 30 хв | `24` |
-| `$termin - (Get-Date).Date` | 2026-11-25 **0:00** | рівно 25 днів | `25` |
+| `$dueDate - (Get-Date)` | 2026-11-25 **21:30** | 24 дні 2 год 30 хв | `24` |
+| `$dueDate - (Get-Date).Date` | 2026-11-25 **0:00** | рівно 25 днів | `25` |
 
 Так результат не залежить від того, о котрій годині ви запускаєте команду.
 
@@ -190,8 +190,8 @@ TotalDays         : 24,1040162037037
 Кожне порівняння з уроку 11 дає відповідь **так** (`True`) або **ні** (`False`):
 
 ```powershell
-$spozhyto -gt 200              # спожито більше за 200 кВт·год?
-(Get-Date) -gt $termin         # термін оплати вже минув?
+$used -gt 200              # спожито більше за 200 кВт·год?
+(Get-Date) -gt $dueDate         # термін оплати вже минув?
 ```
 
 ```text
@@ -202,23 +202,23 @@ False
 У PowerShell такі значення записуються як `$true` і `$false`. Їх можна зберігати у змінних:
 
 ```powershell
-$prostrocheno = (Get-Date) -gt $termin
-$prostrocheno
+$overdue = (Get-Date) -gt $dueDate
+$overdue
 ```
 
 ```text
 False
 ```
 
-`-not` перевертає відповідь: `-not $prostrocheno` дає `True`. Саме такі відповіді «так/ні» використовує `Where-Object` (урок 11), а в модулі 6 на них будуватимуться умови «якщо… то…».
+`-not` перевертає відповідь: `-not $overdue` дає `True`. Саме такі відповіді «так/ні» використовує `Where-Object` (урок 11), а в модулі 6 на них будуватимуться умови «якщо… то…».
 
 ## Типові помилки
 
 ### ❌ Кома замість крапки
 
 ```powershell
-$taryf = 4,32
-$taryf
+$rate = 4,32
+$rate
 ```
 
 ```text
@@ -226,14 +226,14 @@ $taryf
 32
 ```
 
-**Що сталося:** у змінній опинилося два числа, а не одне. Наступні розрахунки з `$taryf` будуть неправильними або завершаться помилкою.
+**Що сталося:** у змінній опинилося два числа, а не одне. Наступні розрахунки з `$rate` будуть неправильними або завершаться помилкою.
 
 **Чому:** кома в командах PowerShell розділяє елементи списку.
 
 ### ✅ Правильно
 
 ```powershell
-$taryf = 4.32
+$rate = 4.32
 ```
 
 ---
@@ -326,7 +326,7 @@ Get-Date -Date "2026-12-05"
 | Округлити вгору / вниз | `[math]::Ceiling(x)` / `[math]::Floor(x)` |
 | Задати дату | `Get-Date -Date "2026-12-20"` (рік-місяць-день) |
 | Сьогодні без часу | `(Get-Date).Date` |
-| Днів між датами | `($data1 - $data2).Days` |
+| Днів між датами | `($date1 - $date2).Days` |
 | Так / ні | `$true` / `$false`, перевернути — `-not` |
 | Текст у число | `[int]"123"`, `[double]"4.32"` |
 
@@ -357,10 +357,10 @@ Get-Date -Date "2026-12-05"
 <summary>Розв’язок</summary>
 
 ```powershell
-$spozhyto = [math]::Round(3468.2 - 3412.5, 1)
-$suma = [math]::Round($spozhyto * 7.96, 2)
-$spozhyto
-$suma
+$used = [math]::Round(3468.2 - 3412.5, 1)
+$total = [math]::Round($used * 7.96, 2)
+$used
+$total
 ```
 
 ```text
@@ -378,8 +378,8 @@ $suma
 <summary>Розв’язок</summary>
 
 ```powershell
-$dr = Get-Date -Date "2027-05-17"
-($dr - (Get-Date).Date).Days
+$birthday = Get-Date -Date "2027-05-17"
+($birthday - (Get-Date).Date).Days
 ```
 
 </details>
@@ -397,10 +397,10 @@ $dr = Get-Date -Date "2027-05-17"
 <summary>Розв’язок</summary>
 
 ```powershell
-$pochatok = Get-Date -Date "2027-03-03"
-$vykhid = $pochatok.AddDays(14)
-$vykhid
-($vykhid.DayOfWeek -eq "Saturday") -or ($vykhid.DayOfWeek -eq "Sunday")
+$start = Get-Date -Date "2027-03-03"
+$returnDate = $start.AddDays(14)
+$returnDate
+($returnDate.DayOfWeek -eq "Saturday") -or ($returnDate.DayOfWeek -eq "Sunday")
 ```
 
 Перший день відпустки — 3 березня, останній (14-й) — 16 березня, тож виходите 17 березня: `AddDays(14)`.

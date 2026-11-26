@@ -20,8 +20,8 @@
 **Масив** — це список значень через кому:
 
 ```powershell
-$papky = "$HOME\Documents", "$HOME\Desktop", "$HOME\Pictures"
-$papky
+$folders = "$HOME\Documents", "$HOME\Desktop", "$HOME\Pictures"
+$folders
 ```
 
 ```text
@@ -33,7 +33,7 @@ C:\Users\Andrii\Pictures
 Скільки елементів у списку:
 
 ```powershell
-$papky.Count
+$folders.Count
 ```
 
 ```text
@@ -44,16 +44,16 @@ $papky.Count
 > Елементи масиву нумеруються **з нуля**: перший — `[0]`, другий — `[1]`. Так само нумеруються частини після `-split` (урок 15). Останній елемент зручно брати як `[-1]`.
 
 ```powershell
-$papky[0]     # перший: Documents
-$papky[2]     # третій: Pictures
-$papky[-1]    # останній: Pictures
+$folders[0]     # перший: Documents
+$folders[2]     # третій: Pictures
+$folders[-1]    # останній: Pictures
 ```
 
 Додати елемент у кінець — оператор `+=`:
 
 ```powershell
-$papky += "$HOME\Videos"
-$papky.Count
+$folders += "$HOME\Videos"
+$folders.Count
 ```
 
 ```text
@@ -61,7 +61,7 @@ $papky.Count
 ```
 
 > [!TIP]
-> Порожній масив створюють так: `$papky = @()`. Запис `@( )` ще знадобиться, коли список треба розбити на кілька рядків: усередині `@( )` кожен елемент можна писати з нового рядка, без коми.
+> Порожній масив створюють так: `$folders = @()`. Запис `@( )` ще знадобиться, коли список треба розбити на кілька рядків: усередині `@( )` кожен елемент можна писати з нового рядка, без коми.
 
 > [!NOTE]
 > Якщо «Робочий стіл» чи «Документи» у вас в OneDrive, візьміть справжні шляхи з `[Environment]::GetFolderPath('Desktop')` і `[Environment]::GetFolderPath('MyDocuments')` (урок 5).
@@ -71,7 +71,7 @@ $papky.Count
 Багато команд приймають цілий список. Перевіримо, чи всі папки існують:
 
 ```powershell
-Test-Path $papky
+Test-Path $folders
 ```
 
 ```text
@@ -86,8 +86,8 @@ False
 Чи є певна папка у списку — оператори `-contains` і `-in`:
 
 ```powershell
-$papky -contains "$HOME\Music"        # чи містить список...?
-"$HOME\Desktop" -in $papky            # чи є ... у списку?
+$folders -contains "$HOME\Music"        # чи містить список...?
+"$HOME\Desktop" -in $folders            # чи є ... у списку?
 ```
 
 ```text
@@ -98,7 +98,7 @@ True
 Скільки файлів і ГБ доведеться переносити? `Get-ChildItem` теж приймає список папок:
 
 ```powershell
-$files = Get-ChildItem $papky -File -Recurse -ErrorAction SilentlyContinue
+$files = Get-ChildItem $folders -File -Recurse -ErrorAction SilentlyContinue
 $files.Count
 ($files | Measure-Object Length -Sum).Sum / 1GB
 ```
@@ -113,7 +113,7 @@ $files.Count
 Справжні назви папок англійські, а в звіті хочеться бачити українські. Для таких відповідностей є **хеш-таблиця**: набір пар «ключ = значення» у `@{ }`, кожна пара з нового рядка або через `;`:
 
 ```powershell
-$nazvy = @{
+$names = @{
     Documents = "Документи"
     Desktop   = "Робочий стіл"
     Pictures  = "Зображення"
@@ -123,8 +123,8 @@ $nazvy = @{
 Значення беруть за ключем — у квадратних дужках або через крапку:
 
 ```powershell
-$nazvy["Desktop"]
-$nazvy.Pictures
+$names["Desktop"]
+$names.Pictures
 ```
 
 ```text
@@ -135,13 +135,13 @@ $nazvy.Pictures
 Додати або змінити пару:
 
 ```powershell
-$nazvy["Videos"] = "Відео"
+$names["Videos"] = "Відео"
 ```
 
-Усі ключі — `$nazvy.Keys`, усі значення — `$nazvy.Values`.
+Усі ключі — `$names.Keys`, усі значення — `$names.Values`.
 
 > [!NOTE]
-> Звичайна хеш-таблиця не запам’ятовує порядок, у якому ви додавали пари, і показує їх у довільному порядку. Якщо порядок важливий, пишіть `[ordered]` перед `@{`: `$nazvy = [ordered]@{ ... }`.
+> Звичайна хеш-таблиця не запам’ятовує порядок, у якому ви додавали пари, і показує їх у довільному порядку. Якщо порядок важливий, пишіть `[ordered]` перед `@{`: `$names = [ordered]@{ ... }`.
 
 Ви вже бачили хеш-таблицю в уроці 12: обчислюваний стовпець `@{ Name = "..."; Expression = { ... } }` — це теж хеш-таблиця з двома ключами.
 
@@ -152,13 +152,13 @@ $nazvy["Videos"] = "Відео"
 Складемо підсумок переносу:
 
 ```powershell
-$pidsumok = [PSCustomObject]@{
+$summary = [PSCustomObject]@{
     Дата   = Get-Date -Format "yyyy-MM-dd"
-    Папок  = $papky.Count
+    Папок  = $folders.Count
     Файлів = $files.Count
     ГБ     = [math]::Round(($files | Measure-Object Length -Sum).Sum / 1GB, 1)
 }
-$pidsumok
+$summary
 ```
 
 ```text
@@ -167,7 +167,7 @@ $pidsumok
 2026-11-25     4   3871 18,6
 ```
 
-Це такий самий об’єкт, як файл чи процес (урок 9): у нього є властивості, `$pidsumok.ГБ` повертає `18,6`, а `$pidsumok | Get-Member` покаже всі чотири властивості. Такий об’єкт можна зберегти у файл CSV, про це — в уроці 17.
+Це такий самий об’єкт, як файл чи процес (урок 9): у нього є властивості, `$summary.ГБ` повертає `18,6`, а `$summary | Get-Member` покаже всі чотири властивості. Такий об’єкт можна зберегти у файл CSV, про це — в уроці 17.
 
 > [!TIP]
 > Назви властивостей в `[PSCustomObject]` можуть бути українськими, як у прикладі: вони стануть заголовками стовпців. Якщо в назві є пробіл, візьміть її в лапки: `"Розмір ГБ" = ...`.
@@ -177,8 +177,8 @@ $pidsumok
 ### ❌ Нумерація з одиниці
 
 ```powershell
-$papky = "$HOME\Documents", "$HOME\Desktop", "$HOME\Pictures"
-$papky[1]
+$folders = "$HOME\Documents", "$HOME\Desktop", "$HOME\Pictures"
+$folders[1]
 ```
 
 ```text
@@ -192,7 +192,7 @@ C:\Users\Andrii\Desktop
 ### ✅ Правильно
 
 ```powershell
-$papky[0]
+$folders[0]
 ```
 
 ---
@@ -200,7 +200,7 @@ $papky[0]
 ### ❌ Номер за межами списку
 
 ```powershell
-$papky[3]
+$folders[3]
 ```
 
 **Що сталося:** порожньо, жодної помилки.
@@ -209,14 +209,14 @@ $papky[3]
 
 ### ✅ Правильно
 
-Перевірте кількість: `$papky.Count`. Останній елемент — `$papky[-1]` або `$papky[$papky.Count - 1]`.
+Перевірте кількість: `$folders.Count`. Останній елемент — `$folders[-1]` або `$folders[$folders.Count - 1]`.
 
 ---
 
 ### ❌ Забули кому між елементами
 
 ```powershell
-$papky = "$HOME\Documents" "$HOME\Desktop"
+$folders = "$HOME\Documents" "$HOME\Desktop"
 ```
 
 ```text
@@ -228,13 +228,13 @@ Unexpected token '"$HOME\Desktop"' in expression or statement.
 ### ✅ Правильно
 
 ```powershell
-$papky = "$HOME\Documents", "$HOME\Desktop"
+$folders = "$HOME\Documents", "$HOME\Desktop"
 ```
 
 Або в `@( )` з кожним елементом з нового рядка:
 
 ```powershell
-$papky = @(
+$folders = @(
     "$HOME\Documents"
     "$HOME\Desktop"
 )
@@ -245,8 +245,8 @@ $papky = @(
 ### ❌ Номер телефону без лапок
 
 ```powershell
-$tel = @{ Mama = 0501112233 }
-$tel.Mama
+$phones = @{ Mama = 0501112233 }
+$phones.Mama
 ```
 
 ```text
@@ -262,7 +262,7 @@ $tel.Mama
 Номери телефонів, поштові індекси, номери рахунків — це текст, хоч і складається з цифр. Беріть їх у лапки:
 
 ```powershell
-$tel = @{ Mama = "0501112233" }
+$phones = @{ Mama = "0501112233" }
 ```
 
 ## Підсумок
@@ -302,34 +302,34 @@ $tel = @{ Mama = "0501112233" }
 
 ## Практика (~10 хв)
 
-**Завдання 1** (легке). Створіть масив `$spysok` з трьох покупок, виведіть другу з них, додайте четверту і виведіть, скільки тепер покупок у списку.
+**Завдання 1** (легке). Створіть масив `$shopping` з трьох покупок, виведіть другу з них, додайте четверту і виведіть, скільки тепер покупок у списку.
 
 <details>
 <summary>Розв’язок</summary>
 
 ```powershell
-$spysok = "хліб", "молоко", "яйця"
-$spysok[1]
-$spysok += "сир"
-$spysok.Count
+$shopping = "хліб", "молоко", "яйця"
+$shopping[1]
+$shopping += "сир"
+$shopping.Count
 ```
 
 </details>
 
-**Завдання 2.** Створіть хеш-таблицю `$tel` з телефонами трьох людей (ключ — ім’я латиницею, значення — номер у лапках). Виведіть номер однієї людини, додайте четверту і виведіть усі імена.
+**Завдання 2.** Створіть хеш-таблицю `$phones` з телефонами трьох людей (ключ — ім’я латиницею, значення — номер у лапках). Виведіть номер однієї людини, додайте четверту і виведіть усі імена.
 
 <details>
 <summary>Розв’язок</summary>
 
 ```powershell
-$tel = @{
+$phones = @{
     Mama   = "+380501112233"
     Tato   = "+380671234567"
     Robota = "+380445556677"
 }
-$tel["Mama"]
-$tel["Likar"] = "+380931112244"
-$tel.Keys
+$phones["Mama"]
+$phones["Likar"] = "+380931112244"
+$phones.Keys
 ```
 
 Номери телефонів беріть у лапки: це текст, а не число. Інакше `+380...` перетвориться на число, і знак `+` зникне.
@@ -341,7 +341,7 @@ $tel.Keys
 <details>
 <summary>Підказка</summary>
 
-`Test-Path $papky` повертає список `True`/`False`. Перевірте, чи містить він `False`, оператором `-contains`.
+`Test-Path $folders` повертає список `True`/`False`. Перевірте, чи містить він `False`, оператором `-contains`.
 
 </details>
 
@@ -349,13 +349,13 @@ $tel.Keys
 <summary>Розв’язок</summary>
 
 ```powershell
-$papky = "$HOME\Documents", "$HOME\Pictures"
-$files = Get-ChildItem $papky -File -Recurse -ErrorAction SilentlyContinue
+$folders = "$HOME\Documents", "$HOME\Pictures"
+$files = Get-ChildItem $folders -File -Recurse -ErrorAction SilentlyContinue
 [PSCustomObject]@{
-    Папок      = $papky.Count
+    Папок      = $folders.Count
     Файлів     = $files.Count
     ГБ         = [math]::Round(($files | Measure-Object Length -Sum).Sum / 1GB, 1)
-    ЄВідсутні = (Test-Path $papky) -contains $false
+    ЄВідсутні = (Test-Path $folders) -contains $false
 }
 ```
 

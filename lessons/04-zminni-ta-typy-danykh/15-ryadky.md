@@ -31,14 +31,14 @@ New-Item -ItemType File -Name "IMG_20260713_091544.jpg"
 Текст (рядок) береться в лапки. У PowerShell лапки бувають двох видів, і різниця між ними важлива:
 
 ```powershell
-$poizdka = "Карпати"
-"Фото з поїздки: $poizdka"
-'Фото з поїздки: $poizdka'
+$trip = "Карпати"
+"Фото з поїздки: $trip"
+'Фото з поїздки: $trip'
 ```
 
 ```text
 Фото з поїздки: Карпати
-Фото з поїздки: $poizdka
+Фото з поїздки: $trip
 ```
 
 - У **подвійних** лапках `"..."` PowerShell підставляє значення змінних.
@@ -52,8 +52,8 @@ $poizdka = "Карпати"
 Збережемо файли у змінну і складемо опис:
 
 ```powershell
-$foto = Get-ChildItem "$HOME\PS-Kurs\Фото" -Filter *.jpg
-"У поїздці $poizdka зроблено $($foto.Count) фото"
+$photos = Get-ChildItem "$HOME\PS-Kurs\Фото" -Filter *.jpg
+"У поїздці $trip зроблено $($photos.Count) фото"
 ```
 
 ```text
@@ -61,14 +61,14 @@ $foto = Get-ChildItem "$HOME\PS-Kurs\Фото" -Filter *.jpg
 ```
 
 > [!IMPORTANT]
-> Просту змінну можна писати в тексті як є: `$poizdka`. Але якщо потрібна **властивість** (`$foto.Count`) або результат команди, загорніть їх у `$( )`. Без цього PowerShell підставить лише `$foto`, а `.Count` залишить звичайним текстом (див. «Типові помилки»).
+> Просту змінну можна писати в тексті як є: `$trip`. Але якщо потрібна **властивість** (`$photos.Count`) або результат команди, загорніть їх у `$( )`. Без цього PowerShell підставить лише `$photos`, а `.Count` залишить звичайним текстом (див. «Типові помилки»).
 
 ### 3. Дати й числа у потрібному вигляді: `-f`
 
 Оператор `-f` (format) підставляє значення у шаблон. Місця для значень позначають `{0}`, `{1}`… за порядком:
 
 ```powershell
-"{0}: {1} фото" -f $poizdka, $foto.Count
+"{0}: {1} фото" -f $trip, $photos.Count
 ```
 
 ```text
@@ -170,7 +170,7 @@ IMG
 1. **Не розрізняють великі й малі літери.** `"img_1.jpg" -replace "IMG_", "Карпати_"` дає `Карпати_1.jpg`. Деякі телефони й камери пишуть `IMG_`, а деякі `img_`, і оператор упорається з обома.
 2. **Працюють з цілим списком одразу.** Наприклад, усі назви фото з розділу 2 можна змінити однією дією й подивитися, що вийде, ще до перейменування:
    ```powershell
-   $foto.Name -replace "IMG_", "Карпати_"
+   $photos.Name -replace "IMG_", "Карпати_"
    ```
    Метод `.Replace()` так не вміє: він працює лише з одним рядком.
 3. **Розуміють шаблони.** Перше значення в `-replace` і `-split` — це шаблон (регулярний вираз), у якому деякі знаки мають особливе значення. Для простих слів на кшталт `IMG_` різниці немає, але є підступ із розділовими знаками.
@@ -216,12 +216,12 @@ What if: Performing the operation "Rename File" on target "Item: C:\Users\Andrii
 Для опису на кілька рядків є спеціальний запис: `@"` у кінці першого рядка і `"@` на **початку** останнього рядка. Змінні всередині підставляються, як у звичайних подвійних лапках:
 
 ```powershell
-$opys = @"
-Поїздка: $poizdka
-Фото: $($foto.Count)
+$description = @"
+Поїздка: $trip
+Фото: $($photos.Count)
 Опис створено: $(Get-Date -Format "yyyy-MM-dd")
 "@
-Set-Content -Path "$HOME\PS-Kurs\Фото\опис.txt" -Value $opys -Encoding UTF8
+Set-Content -Path "$HOME\PS-Kurs\Фото\опис.txt" -Value $description -Encoding UTF8
 ```
 
 Відкрийте файл (`notepad "$HOME\PS-Kurs\Фото\опис.txt"`) і перевірте результат.
@@ -231,17 +231,17 @@ Set-Content -Path "$HOME\PS-Kurs\Фото\опис.txt" -Value $opys -Encoding U
 ### ❌ Змінна в одинарних лапках
 
 ```powershell
-Set-Content -Path "опис.txt" -Value 'Поїздка: $poizdka' -Encoding UTF8
+Set-Content -Path "опис.txt" -Value 'Поїздка: $trip' -Encoding UTF8
 ```
 
-У файлі: `Поїздка: $poizdka`.
+У файлі: `Поїздка: $trip`.
 
 **Чому:** в одинарних лапках змінні не підставляються.
 
 ### ✅ Правильно
 
 ```powershell
-Set-Content -Path "опис.txt" -Value "Поїздка: $poizdka" -Encoding UTF8
+Set-Content -Path "опис.txt" -Value "Поїздка: $trip" -Encoding UTF8
 ```
 
 ---
@@ -249,23 +249,23 @@ Set-Content -Path "опис.txt" -Value "Поїздка: $poizdka" -Encoding UTF
 ### ❌ Властивість або дата в тексті без `$( )`
 
 ```powershell
-$den = Get-Date
-"Сьогодні $den.DayOfWeek"
+$today = Get-Date
+"Сьогодні $today.DayOfWeek"
 ```
 
 ```text
 Сьогодні 11/25/2026 21:40:00.DayOfWeek
 ```
 
-**Що сталося:** дві проблеми одразу. По-перше, PowerShell підставив лише `$den`, а `.DayOfWeek` залишив текстом. По-друге, дата в тексті вийшла в американському форматі (місяць/день/рік), хоча Windows українська.
+**Що сталося:** дві проблеми одразу. По-перше, PowerShell підставив лише `$today`, а `.DayOfWeek` залишив текстом. По-друге, дата в тексті вийшла в американському форматі (місяць/день/рік), хоча Windows українська.
 
 **Чому:** у рядку PowerShell підставляє лише назву змінної, а дати перетворює на текст завжди однаково, незалежно від мови Windows (як `[datetime]` в уроці 14).
 
 ### ✅ Правильно
 
 ```powershell
-"Сьогодні $($den.DayOfWeek)"
-"Сьогодні {0:yyyy-MM-dd}" -f $den
+"Сьогодні $($today.DayOfWeek)"
+"Сьогодні {0:yyyy-MM-dd}" -f $today
 ```
 
 ---
@@ -337,10 +337,10 @@ ________________
 
 | Що | Як |
 |---|---|
-| Текст зі змінною | `"Поїздка: $poizdka"` |
+| Текст зі змінною | `"Поїздка: $trip"` |
 | Текст буквально | `'Ціна: $5'` |
-| Властивість у тексті | `"$($foto.Count) фото"` |
-| Шаблон | `"{0:yyyy-MM-dd} — {1}" -f $data, $tekst` |
+| Властивість у тексті | `"$($photos.Count) фото"` |
+| Шаблон | `"{0:yyyy-MM-dd} — {1}" -f $date, $text` |
 | Дата як текст | `Get-Date -Format "yyyy-MM-dd"` |
 | Замінити (шаблон) | `-replace "що", "на що"` |
 | Замінити буквально | `.Replace("що", "на що")` |
@@ -351,7 +351,7 @@ ________________
 ## Перевір себе (~5 хв)
 
 1. Що виведе `'Привіт, $env:USERNAME'`? А `"Привіт, $env:USERNAME"`?
-2. Чому `"Файлів: $foto.Count"` не покаже кількість?
+2. Чому `"Файлів: $photos.Count"` не покаже кількість?
 3. Чим `MM` відрізняється від `mm` у шаблоні дати?
 4. Що поверне `"a.b.c" -replace ".", "-"` і як отримати `a-b-c`?
 5. Навіщо фігурні дужки в `Rename-Item -NewName { $_.Name -replace "IMG_", "Карпати_" }`?
@@ -360,7 +360,7 @@ ________________
 <summary>Відповіді</summary>
 
 1. Перше — текст як є: `Привіт, $env:USERNAME`. Друге — з вашим ім’ям користувача: `Привіт, Andrii`.
-2. Підставиться лише `$foto`, а `.Count` залишиться текстом. Потрібно `$($foto.Count)`.
+2. Підставиться лише `$photos`, а `.Count` залишиться текстом. Потрібно `$($photos.Count)`.
 3. `MM` — місяць, `mm` — хвилини.
 4. `-----`, бо крапка в `-replace` означає будь-який символ. Правильно: `"a.b.c".Replace(".", "-")`.
 5. Щоб нова назва обчислювалася окремо для кожного файлу з конвеєра: `$_` — поточний файл.
@@ -377,8 +377,8 @@ ________________
 <summary>Розв’язок</summary>
 
 ```powershell
-$den = Get-Date
-"Сьогодні {0:yyyy-MM-dd}, {1}" -f $den, $den.DayOfWeek
+$today = Get-Date
+"Сьогодні {0:yyyy-MM-dd}, {1}" -f $today, $today.DayOfWeek
 ```
 
 </details>
@@ -416,9 +416,9 @@ Get-ChildItem -Filter *.jpg |
 
 ```powershell
 Get-ChildItem -Filter "Карпати_*.jpg" | Rename-Item -NewName {
-    $chastyny = $_.Name -split "_"
-    $d = $chastyny[1]
-    "{0}_{1}-{2}-{3}_{4}" -f $chastyny[0], $d.Substring(0, 4), $d.Substring(4, 2), $d.Substring(6, 2), $chastyny[2]
+    $parts = $_.Name -split "_"
+    $d = $parts[1]
+    "{0}_{1}-{2}-{3}_{4}" -f $parts[0], $d.Substring(0, 4), $d.Substring(4, 2), $d.Substring(6, 2), $parts[2]
 } -WhatIf
 ```
 

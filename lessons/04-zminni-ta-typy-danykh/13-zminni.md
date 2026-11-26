@@ -22,13 +22,13 @@
 Назва змінної завжди починається зі знака `$`. Значення кладуть знаком `=`:
 
 ```powershell
-$zav = "$HOME\Downloads"
+$downloads = "$HOME\Downloads"
 ```
 
-Тепер `$zav` означає шлях до «Завантажень». Щоб подивитися значення, просто введіть назву змінної:
+Тепер `$downloads` означає шлях до «Завантажень». Щоб подивитися значення, просто введіть назву змінної:
 
 ```powershell
-$zav
+$downloads
 ```
 
 ```text
@@ -38,25 +38,25 @@ C:\Users\Andrii\Downloads
 Використовуємо в команді замість довгого шляху:
 
 ```powershell
-Get-ChildItem $zav -File
+Get-ChildItem $downloads -File
 ```
 
 > [!TIP]
-> Назви змінних пишіть **латиницею**, без пробілів: `$zav`, `$porig`, `$velyki`. PowerShell дозволяє і кириличні назви, але тоді доведеться весь час перемикати розкладку, а у скриптах, якими ви поділитеся, такі назви можуть відобразитися неправильно. Великі й малі літери не розрізняються: `$Zav` і `$zav` — та сама змінна.
+> Назви змінних пишіть **англійськими словами**, без пробілів: `$downloads`, `$cutoff`, `$bigFiles`. Їх легко читати, і так роблять у більшості прикладів в інтернеті й у документації. Якщо назва з кількох слів, пишіть їх разом, кожне наступне з великої літери: `$bigFiles`, `$dueDate`. PowerShell дозволяє і кириличні назви, але тоді доведеться весь час перемикати розкладку, а у скриптах, якими ви поділитеся, такі назви можуть відобразитися неправильно. Великі й малі літери PowerShell не розрізняє: `$Downloads` і `$downloads` — та сама змінна.
 
 ### 2. Збережемо всі значення для прибирання
 
 Пам’ятаєте умову з уроку 11: файли, більші за 100 МБ, які не змінювали понад пів року? Збережемо обидві межі:
 
 ```powershell
-$rozmir = 100MB
-$porig = (Get-Date).AddMonths(-6)
+$minSize = 100MB
+$cutoff = (Get-Date).AddMonths(-6)
 ```
 
-Подивіться, що лежить у `$porig`:
+Подивіться, що лежить у `$cutoff`:
 
 ```powershell
-$porig
+$cutoff
 ```
 
 ```text
@@ -66,13 +66,13 @@ $porig
 Тепер довга команда з уроку 11 читається майже як речення:
 
 ```powershell
-Get-ChildItem $zav -File | Where-Object { ($_.Length -gt $rozmir) -and ($_.LastWriteTime -lt $porig) }
+Get-ChildItem $downloads -File | Where-Object { ($_.Length -gt $minSize) -and ($_.LastWriteTime -lt $cutoff) }
 ```
 
 Хочете іншу межу, наприклад 500 МБ? Змініть лише змінну, команду переписувати не треба:
 
 ```powershell
-$rozmir = 500MB
+$minSize = 500MB
 ```
 
 Нове значення просто замінює старе.
@@ -82,23 +82,23 @@ $rozmir = 500MB
 У змінну можна покласти не лише число чи текст, а й **результат цілої команди**:
 
 ```powershell
-$velyki = Get-ChildItem $zav -File | Where-Object { ($_.Length -gt $rozmir) -and ($_.LastWriteTime -lt $porig) }
+$bigFiles = Get-ChildItem $downloads -File | Where-Object { ($_.Length -gt $minSize) -and ($_.LastWriteTime -lt $cutoff) }
 ```
 
 На екрані нічого не з’явиться: результат пішов у змінну, а не на екран. Тепер з ним можна працювати далі, не шукаючи файли повторно:
 
 ```powershell
-$velyki                                              # показати знайдені файли
-$velyki.Count                                        # скільки їх
-($velyki | Measure-Object Length -Sum).Sum / 1GB     # скільки ГБ займають
-$velyki | Sort-Object Length -Descending | Select-Object -First 3
+$bigFiles                                              # показати знайдені файли
+$bigFiles.Count                                        # скільки їх
+($bigFiles | Measure-Object Length -Sum).Sum / 1GB     # скільки ГБ займають
+$bigFiles | Sort-Object Length -Descending | Select-Object -First 3
 ```
 
 > [!IMPORTANT]
-> У змінній зберігаються **об’єкти** (урок 9), а не текст з екрана. Тому в `$velyki` у кожного файлу є всі властивості: `Name`, `Length`, `LastWriteTime` тощо. Їх можна сортувати, фільтрувати й рахувати, як у модулі 3.
+> У змінній зберігаються **об’єкти** (урок 9), а не текст з екрана. Тому в `$bigFiles` у кожного файлу є всі властивості: `Name`, `Length`, `LastWriteTime` тощо. Їх можна сортувати, фільтрувати й рахувати, як у модулі 3.
 
 > [!NOTE]
-> Змінна — це **знімок** на момент виконання команди. Якщо після цього ви видалите чи завантажите файли, `$velyki` про це не дізнається. Щоб оновити, виконайте команду з присвоєнням ще раз.
+> Змінна — це **знімок** на момент виконання команди. Якщо після цього ви видалите чи завантажите файли, `$bigFiles` про це не дізнається. Щоб оновити, виконайте команду з присвоєнням ще раз.
 
 ### 4. Готові змінні PowerShell
 
@@ -125,20 +125,20 @@ $velyki | Sort-Object Length -Descending | Select-Object -First 3
 ### ❌ Забули `$`
 
 ```powershell
-zav = "$HOME\Downloads"
+downloads = "$HOME\Downloads"
 ```
 
 ```text
-zav : The term 'zav' is not recognized as the name of a cmdlet, function, script file, or
+downloads : The term 'downloads' is not recognized as the name of a cmdlet, function, script file, or
 operable program.
 ```
 
-**Чому:** без `$` PowerShell вважає `zav` назвою команди і шукає таку команду.
+**Чому:** без `$` PowerShell вважає `downloads` назвою команди і шукає таку команду.
 
 ### ✅ Правильно
 
 ```powershell
-$zav = "$HOME\Downloads"
+$downloads = "$HOME\Downloads"
 ```
 
 ---
@@ -146,33 +146,33 @@ $zav = "$HOME\Downloads"
 ### ❌ Помилка в назві змінної
 
 ```powershell
-$rozmir = 100MB
-Get-ChildItem $zav -File | Where-Object { $_.Length -gt $rozmyr }
+$minSize = 100MB
+Get-ChildItem $downloads -File | Where-Object { $_.Length -gt $minSise }
 ```
 
 **Що сталося:** команда вивела **всі** файли, а не лише великі. Жодної помилки.
 
-**Чому:** змінної `$rozmyr` (з «y») не існує. PowerShell мовчки підставив замість неї `$null` («нічого»), а будь-який розмір файлу більший за «нічого».
+**Чому:** змінної `$minSise` (з «s» замість «z») не існує. PowerShell мовчки підставив замість неї `$null` («нічого»), а будь-який розмір файлу більший за «нічого».
 
 ### ✅ Правильно
 
 Перевірте назву змінної, ввівши її окремо: якщо на екрані порожньо, змінна не існує або порожня.
 
 ```powershell
-$rozmyr        # порожньо: такої змінної немає
-$rozmir        # 104857600
+$minSise        # порожньо: такої змінної немає
+$minSize        # 104857600
 ```
 
 > [!TIP]
-> Набирайте назви змінних з **Tab**: введіть `$roz` і натисніть **Tab**, PowerShell допише назву сам. Так помилитися значно важче.
+> Набирайте назви змінних з **Tab**: введіть `$min` і натисніть **Tab**, PowerShell допише назву сам. Так помилитися значно важче.
 
 ---
 
 ### ❌ Змінна зникла
 
-Учора ви створили `$zav`, сьогодні відкрили PowerShell і пишете `Get-ChildItem $zav`, а бачите вміст **поточної** папки, а не «Завантажень».
+Учора ви створили `$downloads`, сьогодні відкрили PowerShell і пишете `Get-ChildItem $downloads`, а бачите вміст **поточної** папки, а не «Завантажень».
 
-**Чому:** змінні живуть лише до закриття вікна. `$zav` тепер не існує, тобто дорівнює `$null`, і `Get-ChildItem` без шляху показує поточну папку.
+**Чому:** змінні живуть лише до закриття вікна. `$downloads` тепер не існує, тобто дорівнює `$null`, і `Get-ChildItem` без шляху показує поточну папку.
 
 ### ✅ Правильно
 
@@ -182,18 +182,18 @@ $rozmir        # 104857600
 
 | Що | Як |
 |---|---|
-| Створити або змінити змінну | `$nazva = значення` |
-| Подивитися значення | `$nazva` |
-| Зберегти результат команди | `$nazva = команда` |
-| Властивість об’єкта зі змінної | `$nazva.Count`, `$nazva.Length` |
+| Створити або змінити змінну | `$name = значення` |
+| Подивитися значення | `$name` |
+| Зберегти результат команди | `$name = команда` |
+| Властивість об’єкта зі змінної | `$name.Count`, `$name.Length` |
 | Скільки живе змінна | до закриття вікна PowerShell |
 | «Нічого» | `$null` |
 
 ## Перевір себе (~5 хв)
 
 1. Що зберігається в змінній після `$f = Get-ChildItem $HOME\Downloads -File`: текст з екрана чи об’єкти?
-2. Чому після `$velyki = ...` на екрані нічого не з’являється?
-3. Ви видалили половину файлів, але `$velyki.Count` показує стару кількість. Чому?
+2. Чому після `$bigFiles = ...` на екрані нічого не з’являється?
+3. Ви видалили половину файлів, але `$bigFiles.Count` показує стару кількість. Чому?
 4. Що підставить PowerShell, якщо назву змінної написано з помилкою?
 5. Що станеться з вашими змінними після закриття вікна PowerShell?
 
@@ -210,46 +210,46 @@ $rozmir        # 104857600
 
 ## Практика (~10 хв)
 
-**Завдання 1** (легке). Створіть змінну `$doc` зі шляхом до папки «Документи» і виведіть за її допомогою лише файли `.docx` у цій папці.
+**Завдання 1** (легке). Створіть змінну `$docs` зі шляхом до папки «Документи» і виведіть за її допомогою лише файли `.docx` у цій папці.
 
 <details>
 <summary>Розв’язок</summary>
 
 ```powershell
-$doc = "$HOME\Documents"
-Get-ChildItem $doc -Filter *.docx
+$docs = "$HOME\Documents"
+Get-ChildItem $docs -Filter *.docx
 ```
 
-Якщо «Документи» в OneDrive: `$doc = [Environment]::GetFolderPath('MyDocuments')` (урок 5).
+Якщо «Документи» в OneDrive: `$docs = [Environment]::GetFolderPath('MyDocuments')` (урок 5).
 
 </details>
 
-**Завдання 2.** Збережіть у змінну `$svizhi` усі файли з «Завантажень», завантажені за останні 7 днів. Потім окремими командами виведіть їх кількість і назву найбільшого з них.
+**Завдання 2.** Збережіть у змінну `$newFiles` усі файли з «Завантажень», завантажені за останні 7 днів. Потім окремими командами виведіть їх кількість і назву найбільшого з них.
 
 <details>
 <summary>Розв’язок</summary>
 
 ```powershell
-$zav = "$HOME\Downloads"
-$svizhi = Get-ChildItem $zav -File | Where-Object { $_.LastWriteTime -gt (Get-Date).AddDays(-7) }
-$svizhi.Count
-($svizhi | Sort-Object Length -Descending | Select-Object -First 1).Name
+$downloads = "$HOME\Downloads"
+$newFiles = Get-ChildItem $downloads -File | Where-Object { $_.LastWriteTime -gt (Get-Date).AddDays(-7) }
+$newFiles.Count
+($newFiles | Sort-Object Length -Descending | Select-Object -First 1).Name
 ```
 
 </details>
 
-**Завдання 3** ⭐. Порахуйте, скільки місця в гігабайтах звільниться, якщо видалити з «Завантажень» усі файли, старші за рік. Межу «рік тому» збережіть у змінну `$porig`, знайдені файли — у `$stari`. Перевірте видалення з `-WhatIf`, але не видаляйте.
+**Завдання 3** ⭐. Порахуйте, скільки місця в гігабайтах звільниться, якщо видалити з «Завантажень» усі файли, старші за рік. Межу «рік тому» збережіть у змінну `$cutoff`, знайдені файли — у `$oldFiles`. Перевірте видалення з `-WhatIf`, але не видаляйте.
 
 <details>
 <summary>Розв’язок</summary>
 
 ```powershell
-$zav = "$HOME\Downloads"
-$porig = (Get-Date).AddYears(-1)
-$stari = Get-ChildItem $zav -File | Where-Object { $_.LastWriteTime -lt $porig }
-$stari.Count
-($stari | Measure-Object Length -Sum).Sum / 1GB
-$stari | Remove-Item -WhatIf
+$downloads = "$HOME\Downloads"
+$cutoff = (Get-Date).AddYears(-1)
+$oldFiles = Get-ChildItem $downloads -File | Where-Object { $_.LastWriteTime -lt $cutoff }
+$oldFiles.Count
+($oldFiles | Measure-Object Length -Sum).Sum / 1GB
+$oldFiles | Remove-Item -WhatIf
 ```
 
 Змінну з файлами можна передати конвеєром будь-якій команді, як результат звичайної команди.
