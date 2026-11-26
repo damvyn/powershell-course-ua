@@ -98,9 +98,9 @@ True
 Скільки файлів і ГБ доведеться переносити? `Get-ChildItem` теж приймає список папок:
 
 ```powershell
-$fajly = Get-ChildItem $papky -File -Recurse -ErrorAction SilentlyContinue
-$fajly.Count
-($fajly | Measure-Object Length -Sum).Sum / 1GB
+$files = Get-ChildItem $papky -File -Recurse -ErrorAction SilentlyContinue
+$files.Count
+($files | Measure-Object Length -Sum).Sum / 1GB
 ```
 
 `-ErrorAction SilentlyContinue` прибирає червоні повідомлення про папки, яких немає або до яких немає доступу. Докладно про помилки — у модулі 6.
@@ -155,8 +155,8 @@ $nazvy["Videos"] = "Відео"
 $pidsumok = [PSCustomObject]@{
     Дата   = Get-Date -Format "yyyy-MM-dd"
     Папок  = $papky.Count
-    Файлів = $fajly.Count
-    ГБ     = [math]::Round(($fajly | Measure-Object Length -Sum).Sum / 1GB, 1)
+    Файлів = $files.Count
+    ГБ     = [math]::Round(($files | Measure-Object Length -Sum).Sum / 1GB, 1)
 }
 $pidsumok
 ```
@@ -350,11 +350,11 @@ $tel.Keys
 
 ```powershell
 $papky = "$HOME\Documents", "$HOME\Pictures"
-$fajly = Get-ChildItem $papky -File -Recurse -ErrorAction SilentlyContinue
+$files = Get-ChildItem $papky -File -Recurse -ErrorAction SilentlyContinue
 [PSCustomObject]@{
     Папок      = $papky.Count
-    Файлів     = $fajly.Count
-    ГБ         = [math]::Round(($fajly | Measure-Object Length -Sum).Sum / 1GB, 1)
+    Файлів     = $files.Count
+    ГБ         = [math]::Round(($files | Measure-Object Length -Sum).Sum / 1GB, 1)
     ЄВідсутні = (Test-Path $papky) -contains $false
 }
 ```
